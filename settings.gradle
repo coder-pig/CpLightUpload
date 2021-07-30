@@ -1,0 +1,3 @@
+include ':cpLightUpload'
+include ':app'
+rootProject.name = "CpLightUpload"
