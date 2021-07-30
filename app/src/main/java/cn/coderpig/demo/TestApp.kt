@@ -2,6 +2,8 @@ package cn.coderpig.demo
 
 import android.app.Application
 import android.content.Context
+import cn.coderpig.cplightupload.LightUpload
+import cn.coderpig.cplightupload.LightUploadBuilder
 import cn.coderpig.demo.example.PictureCompressInterceptor
 import cn.coderpig.demo.example.PictureRotateInterceptor
 import cn.coderpig.demo.ext.PartnerKotlinExtKit

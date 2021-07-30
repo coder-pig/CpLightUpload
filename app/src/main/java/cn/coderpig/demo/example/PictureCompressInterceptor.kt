@@ -1,9 +1,9 @@
 package cn.coderpig.demo.example
 
-import cn.coderpig.demo.interceptor.Interceptor
-import cn.coderpig.demo.task.Task
-import cn.coderpig.demo.utils.FileUtils
-import cn.coderpig.demo.utils.logV
+import cn.coderpig.cplightupload.interceptor.Interceptor
+import cn.coderpig.cplightupload.task.Task
+import cn.coderpig.cplightupload.utils.FileUtils
+import cn.coderpig.cplightupload.utils.logV
 import java.io.File
 
 /**

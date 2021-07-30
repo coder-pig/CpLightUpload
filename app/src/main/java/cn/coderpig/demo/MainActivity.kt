@@ -1,10 +1,11 @@
 package cn.coderpig.demo
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import cn.coderpig.demo.entity.ReqData
+import androidx.appcompat.app.AppCompatActivity
+import cn.coderpig.cplightupload.LightUpload
+import cn.coderpig.cplightupload.entity.ReqData
 import cn.coderpig.demo.ext.KtCameraExt.Companion.dispatchTakePictureIntent
 import cn.coderpig.demo.ext.UriBean
 import cn.coderpig.demo.ext.getOutputMediaFileUri
