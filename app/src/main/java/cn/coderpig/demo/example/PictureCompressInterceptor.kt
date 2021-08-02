@@ -1,9 +1,9 @@
 package cn.coderpig.demo.example
 
-import cn.coderpig.demo.interceptor.Interceptor
-import cn.coderpig.demo.task.Task
-import cn.coderpig.demo.utils.FileUtils
-import cn.coderpig.demo.utils.logV
+import cn.coderpig.cplightupload.interceptor.Interceptor
+import cn.coderpig.cplightupload.task.Task
+import cn.coderpig.cplightupload.utils.FileUtils
+import cn.coderpig.cplightupload.utils.logV
 import java.io.File
 
 /**
@@ -14,7 +14,7 @@ import java.io.File
 class PictureCompressInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Task {
         val task = chain.task()
-        "校验是否需要进行图片压缩，及压缩比例 ============".logV()
+        "============ 校验是否需要进行图片压缩，及压缩比例 ============".logV()
         "执行压缩操作...".logV()
         val afterPath = task.filePath!!.replace(".${task.fileType!!}", "") + "_compress." + task.fileType!!
         val afterFile = File(afterPath)

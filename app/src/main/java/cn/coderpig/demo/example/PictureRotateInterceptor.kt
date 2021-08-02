@@ -1,9 +1,9 @@
 package cn.coderpig.demo.example
 
-import cn.coderpig.demo.interceptor.Interceptor
-import cn.coderpig.demo.task.Task
-import cn.coderpig.demo.utils.FileUtils
-import cn.coderpig.demo.utils.logV
+import cn.coderpig.cplightupload.interceptor.Interceptor
+import cn.coderpig.cplightupload.task.Task
+import cn.coderpig.cplightupload.utils.FileUtils
+import cn.coderpig.cplightupload.utils.logV
 
 /**
  * Author: zpj
@@ -13,7 +13,7 @@ import cn.coderpig.demo.utils.logV
 class PictureRotateInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Task {
         val task = chain.task()
-        "判断是否需要图片翻转 ============".logV()
+        "============ 判断是否需要图片翻转 ============".logV()
         val degree = FileUtils.readPictureDegree(task.filePath!!)
         if (degree != 0) {
             FileUtils.rotateToDegrees(task.filePath!!, degree.toFloat())

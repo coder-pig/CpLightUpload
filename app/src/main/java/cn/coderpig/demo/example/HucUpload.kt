@@ -1,9 +1,9 @@
 package cn.coderpig.demo.example
 
 import android.os.Build
-import cn.coderpig.demo.task.Task
-import cn.coderpig.demo.upload.IUpload
-import cn.coderpig.demo.utils.logE
+import cn.coderpig.cplightupload.task.Task
+import cn.coderpig.cplightupload.upload.IUpload
+import cn.coderpig.cplightupload.utils.logE
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
