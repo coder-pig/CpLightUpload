@@ -5,13 +5,10 @@ import cn.coderpig.demo.entity.TaskStatus
 import cn.coderpig.demo.interceptor.Interceptor
 import cn.coderpig.demo.interceptor.chain.BeforeInterceptorChain
 import cn.coderpig.demo.interceptor.chain.DoneInterceptorChain
-import cn.coderpig.demo.interceptor.chain.ReadyInterceptorChain
 import cn.coderpig.demo.interceptor.end.EndBeforeInterceptor
 import cn.coderpig.demo.interceptor.end.EndDoneInterceptor
-import cn.coderpig.demo.interceptor.end.EndReadyInterceptor
 import cn.coderpig.demo.interceptor.start.StartBeforeInterceptor
 import cn.coderpig.demo.interceptor.start.StartDoneInterceptor
-import cn.coderpig.demo.interceptor.start.StartReadyInterceptor
 import cn.coderpig.demo.task.ImageTask
 import cn.coderpig.demo.task.Task
 import cn.coderpig.demo.utils.logV
@@ -73,16 +70,12 @@ object LightUpload {
     fun invokeTask(originTask: Task) {
         "执行上传任务：${originTask.filePath}".logV()
         "上传前...".logV()
-        var afterTask: Task? = BeforeInterceptorChain(beforeInterceptors.apply {
+        var finalTask: Task? = BeforeInterceptorChain(beforeInterceptors.apply {
             add(0, StartBeforeInterceptor())
             add(EndBeforeInterceptor())
         }, 0, originTask).proceed(originTask)
-        "准备上传...".logV()
-        afterTask = ReadyInterceptorChain(readyInterceptors.apply {
-            add(0, StartReadyInterceptor())
-            add(EndReadyInterceptor())
-        }, 0, originTask).proceed(originTask)
-        afterTask = DoneInterceptorChain(doneInterceptors.apply {
+        "上传后...".logV()
+        finalTask = DoneInterceptorChain(doneInterceptors.apply {
             add(0, StartDoneInterceptor())
             add(EndDoneInterceptor())
         }, 0, originTask).proceed(originTask)

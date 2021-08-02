@@ -6,7 +6,7 @@ import cn.coderpig.demo.task.Task
 /**
  * Author: zpj
  * Date: 2021-07-30
- * Desc: 上传结束第一个Chain
+ * Desc: 上传完成后的第一个Chain
  */
 class DoneInterceptorChain(private var interceptors: List<Interceptor>,
                            private var index: Int,

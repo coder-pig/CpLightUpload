@@ -16,7 +16,6 @@ class LightUploadBuilder {
 
     // 拦截器
     val beforeInterceptors: MutableList<Interceptor> = ArrayList()
-    val readyInterceptors: MutableList<Interceptor> = ArrayList()
     val doneInterceptors: MutableList<Interceptor> = ArrayList()
 
     // 线程池
@@ -26,9 +25,6 @@ class LightUploadBuilder {
         interceptor?.let { beforeInterceptors.add(it) }; return this
     }
 
-    fun addReadyInterceptors(interceptor: Interceptor?): LightUploadBuilder {
-        interceptor?.let { readyInterceptors.add(it) }; return this
-    }
 
     fun addDoneInterceptors(interceptor: Interceptor?): LightUploadBuilder {
         interceptor?.let { doneInterceptors.add(it) }; return this
