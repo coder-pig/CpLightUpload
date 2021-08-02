@@ -1,4 +1,4 @@
-package cn.coderpig.demo.example
+package cn.coderpig.demo.example.picture
 
 import cn.coderpig.cplightupload.LightUploadConfig
 

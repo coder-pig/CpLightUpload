@@ -4,10 +4,11 @@ import android.app.Application
 import android.content.Context
 import cn.coderpig.cplightupload.LightUpload
 import cn.coderpig.cplightupload.LightUploadBuilder
-import cn.coderpig.demo.example.HucParsingInterceptor
-import cn.coderpig.demo.example.ImageUploadConfig
-import cn.coderpig.demo.example.PictureCompressInterceptor
-import cn.coderpig.demo.example.PictureRotateInterceptor
+import cn.coderpig.demo.example.picture.HucParsingInterceptor
+import cn.coderpig.demo.example.picture.ImageUploadConfig
+import cn.coderpig.demo.example.picture.PictureCompressInterceptor
+import cn.coderpig.demo.example.picture.PictureRotateInterceptor
+import cn.coderpig.demo.example.video.VideoCompressInterceptor
 import cn.coderpig.demo.ext.PartnerKotlinExtKit
 
 /**
@@ -25,12 +26,14 @@ class TestApp : Application() {
         context = this.applicationContext
         PartnerKotlinExtKit.init(context!!)
         LightUpload.init(
-            LightUploadBuilder()
-                .config("image" to ImageUploadConfig().apply {
-                    uploadServerUrl = "http://uat.zhaoshang800.com/broker/image/uploadNotZip"
-                })
+            this, LightUploadBuilder()
+                .config("image" to ImageUploadConfig()
+                    .apply {
+                        uploadServerUrl = "http://uat.zhaoshang800.com/broker/image/uploadNotZip"
+                    })
                 .addBeforeInterceptor(PictureRotateInterceptor())
                 .addBeforeInterceptor(PictureCompressInterceptor())
+                .addBeforeInterceptor(VideoCompressInterceptor())
                 .addDoneInterceptors(HucParsingInterceptor())
         )
     }

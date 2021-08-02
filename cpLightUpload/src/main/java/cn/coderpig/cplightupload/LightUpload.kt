@@ -1,6 +1,7 @@
 package cn.coderpig.cplightupload
 
 
+import android.content.Context
 import android.os.Looper
 import cn.coderpig.cplightupload.entity.ReqData
 import cn.coderpig.cplightupload.entity.TaskStatus
@@ -13,6 +14,7 @@ import cn.coderpig.cplightupload.interceptor.start.StartBeforeInterceptor
 import cn.coderpig.cplightupload.interceptor.start.StartDoneInterceptor
 import cn.coderpig.cplightupload.task.ImageTask
 import cn.coderpig.cplightupload.task.Task
+import cn.coderpig.cplightupload.task.VideoTask
 import cn.coderpig.cplightupload.upload.HucUpload
 import cn.coderpig.cplightupload.upload.Upload
 import cn.coderpig.cplightupload.utils.MainPoster
@@ -43,10 +45,12 @@ object LightUpload {
 
     private var mainThreadSupport: MainThreadSupport? = null
     private var mainThreadPoster: MainPoster? = null
+    private var mContext: Context? = null
 
 
     /** 定义一个初始化方法，可传入一个自定义Builder */
-    fun init(builder: LightUploadBuilder?) {
+    fun init(context: Context?, builder: LightUploadBuilder?) {
+        mContext = context
         (builder ?: LightUploadBuilder()).let {
             executorService = it.executorService
             taskQueue = LinkedList()
@@ -90,6 +94,13 @@ object LightUpload {
         })
     }
 
+    /** 上传视频 */
+    @Synchronized
+    fun uploadVideo(filePath: String) {
+        uploadTask(VideoTask().also {
+            it.filePath = filePath
+        })
+    }
 
     /** 添加上传任务 */
     @Synchronized
@@ -119,6 +130,8 @@ object LightUpload {
         })
         mUpload?.sendRequest()
     }
+
+    fun getContext() = mContext
 
     fun getTaskQueue() = taskQueue
 
