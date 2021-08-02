@@ -2,6 +2,7 @@ package cn.coderpig.cplightupload.upload
 
 import android.os.Build
 import cn.coderpig.cplightupload.LightUpload
+import cn.coderpig.cplightupload.entity.TaskStatus
 import cn.coderpig.cplightupload.task.Task
 import cn.coderpig.cplightupload.utils.logE
 import cn.coderpig.cplightupload.utils.logV
@@ -34,7 +35,7 @@ class HucUpload : Upload() {
         super.initRequest(task, callback)
         mTask = task
         task.reqData?.let {
-            mUrl = if(it.uploadUrl == null) LightUpload.getConfig()?.uploadServerUrl else it.uploadUrl
+            mUrl = if(it.uploadUrl == null) LightUpload.getConfig()?.get("image")?.uploadServerUrl else it.uploadUrl
             mTimeOut = it.timeout
             mRequestMethod = it.requestMethod
             this.md5 = task.md5
@@ -42,6 +43,8 @@ class HucUpload : Upload() {
             this.path = task.filePath
         }
     }
+
+    @Synchronized
     override fun sendRequest() {
         "开始文件上传...".logV()
         var ins: InputStream? = null
@@ -83,7 +86,7 @@ class HucUpload : Upload() {
                 dos.flush()
             }
             // 获取响应
-            val input = conn.inputStream
+            val input = BufferedReader(InputStreamReader(conn.inputStream, "UTF-8"))
             val sb1 = StringBuilder()
             var ss: Int
             while (input.read().also { ss = it } != -1) {
@@ -92,11 +95,14 @@ class HucUpload : Upload() {
             val result = sb1.toString()
             "文件上传结束...".logV()
             mTask!!.response = Response(conn.responseCode, result)
+            mTask!!.status = TaskStatus.DONE
             mCallback?.onSuccess(mTask!!)
         } catch (e: IOException) {
             e.message?.logE()
-            mCallback?.onFailure(mTask!!, e)
-            mTask!!.callback?.onFailure(mTask!!, e)
+            mTask!!.status = TaskStatus.FAILURE
+            mTask!!.throwable = e
+            mCallback?.onFailure(mTask!!)
+            LightUpload.postTask(mTask!!)
         } finally {
             if (ins != null) {
                 try {

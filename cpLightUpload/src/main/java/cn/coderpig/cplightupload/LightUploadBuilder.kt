@@ -26,7 +26,8 @@ class LightUploadBuilder {
     var upload: Upload? = null
 
     // 上传配置
-    var config: LightUploadConfig? = null
+    var config: Map<String, LightUploadConfig>? = null
+
 
     fun addBeforeInterceptor(interceptor: Interceptor?): LightUploadBuilder {
         interceptor?.let { beforeInterceptors.add(it) }; return this
@@ -44,8 +45,9 @@ class LightUploadBuilder {
         this.upload = upload; return this
     }
 
-    fun config(config: LightUploadConfig): LightUploadBuilder {
-        this.config = config; return this
+    fun config(vararg configs: Pair<String, LightUploadConfig>): LightUploadBuilder {
+        this.config = configs.toMap()
+        return this
     }
 
 }

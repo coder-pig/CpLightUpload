@@ -21,4 +21,5 @@ abstract class Task {
     var status: TaskStatus? = TaskStatus.BEFORE  // 任务状态，初始化默认Before
     var callback: Upload.CallBack? = null   // 上传回调
     var response: Response? = null  // 上传结果
+    var throwable: Throwable? = null  // 异常信息
 }

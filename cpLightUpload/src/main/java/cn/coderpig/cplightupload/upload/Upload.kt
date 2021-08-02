@@ -20,6 +20,6 @@ abstract class Upload {
     // 回调接口
     interface CallBack {
         fun onSuccess(task: Task)
-        fun onFailure(task: Task, throwable: Throwable)
+        fun onFailure(task: Task)
     }
 }

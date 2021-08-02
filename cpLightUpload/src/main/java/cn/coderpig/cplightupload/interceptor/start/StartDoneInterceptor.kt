@@ -10,6 +10,7 @@ import cn.coderpig.cplightupload.utils.logV
  * Desc: 上传完第一个拦截器
  */
 class StartDoneInterceptor : Interceptor {
+    @Synchronized
     override fun intercept(chain: Interceptor.Chain): Task {
         val task = chain.task()
         "分发执行后续处理...".logV()

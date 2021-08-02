@@ -13,9 +13,11 @@ class LightUploadDispatcher(private var kit: LightUpload) : Runnable {
         kit.getExecutorService()!!.execute(this)
     }
 
-
+    @Synchronized
     override fun run() {
-        kit.invokeTask(kit.getTaskQueue()!!.first)
-        kit.getTaskQueue()!!.removeFirst()
+        if(kit.getTaskQueue()?.size!! > 0) {
+            kit.invokeTask(kit.getTaskQueue()!!.first)
+            kit.getTaskQueue()!!.removeFirst()
+        }
     }
 }

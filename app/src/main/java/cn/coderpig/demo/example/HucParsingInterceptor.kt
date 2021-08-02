@@ -12,6 +12,7 @@ import org.json.JSONObject
  * Desc: 抠脚http解析器
  */
 class HucParsingInterceptor: Interceptor {
+    @Synchronized
     override fun intercept(chain: Interceptor.Chain): Task {
         val task = chain.task()
         task.response?.let {
@@ -41,7 +42,6 @@ class HucParsingInterceptor: Interceptor {
                 e.message?.logD()
             }
         }
-
         return chain.proceed(task)
     }
 }

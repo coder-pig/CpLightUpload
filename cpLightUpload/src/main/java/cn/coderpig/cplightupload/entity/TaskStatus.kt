@@ -7,5 +7,5 @@ package cn.coderpig.cplightupload.entity
  * 依次为：上传前、准备上传、开始上传、上传中、上传后
  */
 enum class TaskStatus {
-    BEFORE, READY, START, UPLOADING, FAILURE, DONE
+    BEFORE, START, UPLOADING, FAILURE, DONE
 }

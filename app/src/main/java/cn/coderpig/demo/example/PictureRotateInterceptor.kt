@@ -11,6 +11,7 @@ import cn.coderpig.cplightupload.utils.logV
  * Desc: 图片旋转拦截器
  */
 class PictureRotateInterceptor : Interceptor {
+    @Synchronized
     override fun intercept(chain: Interceptor.Chain): Task {
         val task = chain.task()
         "============ 判断是否需要图片翻转 ============".logV()

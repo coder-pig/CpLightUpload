@@ -13,8 +13,9 @@ import java.io.File
  * Desc: 上传前第一个拦截器，可在此做一些常规操作
  */
 class StartBeforeInterceptor : Interceptor {
+    @Synchronized
     override fun intercept(chain: Interceptor.Chain): Task {
-        "============ 上传文件常规校验 ============".logV()
+        "============ 上传文件常规校验 ============${System.currentTimeMillis()}".logV()
         val task = chain.task()
         "检查文件路径是为空...".logV()
         if (task.filePath.isNullOrBlank()) throw LightUploadException("The file path is null.")

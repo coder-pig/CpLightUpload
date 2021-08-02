@@ -13,13 +13,14 @@ import java.io.File
  * Desc: 图片压缩拦截器
  */
 class PictureCompressInterceptor : Interceptor {
+    @Synchronized
     override fun intercept(chain: Interceptor.Chain): Task {
         val task = chain.task()
         "============ 校验是否需要进行图片压缩，及压缩比例 ============".logV()
         (task as ImageTask).let {
             if(it.needCompress!!) {
                 "执行压缩操作，压缩比例为${it.compressPercent}%".logV()
-                val afterPath = task.filePath!!.replace(".${task.fileType!!}", "") + "_compress." + task.fileType!!
+                val afterPath = task.filePath!!.replace(".${task.fileType!!}", "") + "_compress_${it.compressPercent}." + task.fileType!!
                 val afterFile = File(afterPath)
                 FileUtils.compressImage(FileUtils.getLocalImage(File(task.filePath!!)), afterFile, it.compressPercent!!)
                 task.md5 = FileUtils.getFileMD5ToString(afterFile)

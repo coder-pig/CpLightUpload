@@ -15,6 +15,7 @@ class BeforeInterceptorChain(private var interceptors: List<Interceptor>,
 
     override fun task() = this.task
 
+    @Synchronized
     override fun proceed(task: Task): Task {
         if (index >= interceptors.size) throw AssertionError()
         val next = BeforeInterceptorChain(interceptors, index + 1, task)

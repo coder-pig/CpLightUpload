@@ -26,8 +26,8 @@ class TestApp : Application() {
         PartnerKotlinExtKit.init(context!!)
         LightUpload.init(
             LightUploadBuilder()
-                .config(ImageUploadConfig().apply {
-                    uploadServerUrl = "http://uat.zhaoshang800.com//broker/image/uploadNotZip"
+                .config("image" to ImageUploadConfig().apply {
+                    uploadServerUrl = "http://uat.zhaoshang800.com/broker/image/uploadNotZip"
                 })
                 .addBeforeInterceptor(PictureRotateInterceptor())
                 .addBeforeInterceptor(PictureCompressInterceptor())
