@@ -12,7 +12,7 @@ import cn.coderpig.cplightupload.utils.logV
 class StartDoneInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Task {
         val task = chain.task()
-        "上传完成...".logV()
+        "分发执行后续处理...".logV()
         return chain.proceed(task)
     }
 }

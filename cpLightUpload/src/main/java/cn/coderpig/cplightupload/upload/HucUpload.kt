@@ -1,9 +1,10 @@
-package cn.coderpig.demo.example
+package cn.coderpig.cplightupload.upload
 
 import android.os.Build
+import cn.coderpig.cplightupload.LightUpload
 import cn.coderpig.cplightupload.task.Task
-import cn.coderpig.cplightupload.upload.IUpload
 import cn.coderpig.cplightupload.utils.logE
+import cn.coderpig.cplightupload.utils.logV
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -12,9 +13,10 @@ import java.util.*
 /**
  * Author: zpj
  * Date: 2021-07-30
- * Desc:
+ * Desc: 自带抠脚HttpUrlConnection上传
  */
-class HucUpload : IUpload {
+class HucUpload : Upload() {
+    private var mTask: Task? = null
     private var mUrl: String? = null
     private var mTimeOut: Int = 10 * 1000
     private var mVersion: String = "5.9.1"
@@ -25,19 +27,23 @@ class HucUpload : IUpload {
     private var md5: String? = null
     private var name: String? = null
     private var path: String? = null
+    private var mRequestMethod: String? = null
 
-    override fun initRequest(task: Task) {
+    override fun initRequest(task: Task, callback: CallBack?) {
+        "上传参数初始化...".logV()
+        super.initRequest(task, callback)
+        mTask = task
         task.reqData?.let {
-            mUrl = it.uploadUrl
+            mUrl = if(it.uploadUrl == null) LightUpload.getConfig()?.uploadServerUrl else it.uploadUrl
             mTimeOut = it.timeout
+            mRequestMethod = it.requestMethod
             this.md5 = task.md5
             this.name = task.fileName
             this.path = task.filePath
         }
     }
-
     override fun sendRequest() {
-        "上传图片".logE()
+        "开始文件上传...".logV()
         var ins: InputStream? = null
         try {
             val boundary = UUID.randomUUID()
@@ -56,7 +62,7 @@ class HucUpload : IUpload {
                 setRequestProperty("User-Agent", "partner/${mVersionName}" +
                         "(Android;${Build.VERSION.RELEASE};${width}*${height};" +
                         "Scale=${scale};${Build.BRAND}=${Build.MODEL})")
-                //                         当文件不为空时执行上传
+                // 当文件不为空时执行上传
                 val dos = DataOutputStream(outputStream)
                 val sb = StringBuilder().append("--").append(boundary).append("\r\n")
                     .append("Content-Disposition: form-data; name=\"file\"; filename=\"")
@@ -84,9 +90,13 @@ class HucUpload : IUpload {
                 sb1.append(ss.toChar())
             }
             val result = sb1.toString()
-            result.logE()
+            "文件上传结束...".logV()
+            mTask!!.response = Response(conn.responseCode, result)
+            mCallback?.onSuccess(mTask!!)
         } catch (e: IOException) {
             e.message?.logE()
+            mCallback?.onFailure(mTask!!, e)
+            mTask!!.callback?.onFailure(mTask!!, e)
         } finally {
             if (ins != null) {
                 try {

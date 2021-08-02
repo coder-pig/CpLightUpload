@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import cn.coderpig.cplightupload.LightUpload
 import cn.coderpig.cplightupload.LightUploadBuilder
+import cn.coderpig.demo.example.HucParsingInterceptor
+import cn.coderpig.demo.example.ImageUploadConfig
 import cn.coderpig.demo.example.PictureCompressInterceptor
 import cn.coderpig.demo.example.PictureRotateInterceptor
 import cn.coderpig.demo.ext.PartnerKotlinExtKit
@@ -13,7 +15,7 @@ import cn.coderpig.demo.ext.PartnerKotlinExtKit
  * Date: 2021-07-30
  * Desc:
  */
-class TestApp: Application() {
+class TestApp : Application() {
     companion object {
         var context: Context? = null
     }
@@ -24,8 +26,12 @@ class TestApp: Application() {
         PartnerKotlinExtKit.init(context!!)
         LightUpload.init(
             LightUploadBuilder()
-            .addBeforeInterceptor(PictureRotateInterceptor())
-            .addBeforeInterceptor(PictureCompressInterceptor())
+                .config(ImageUploadConfig().apply {
+                    uploadServerUrl = "http://uat.zhaoshang800.com//broker/image/uploadNotZip"
+                })
+                .addBeforeInterceptor(PictureRotateInterceptor())
+                .addBeforeInterceptor(PictureCompressInterceptor())
+                .addDoneInterceptors(HucParsingInterceptor())
         )
     }
 }

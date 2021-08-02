@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import cn.coderpig.cplightupload.LightUpload
-import cn.coderpig.cplightupload.entity.ReqData
 import cn.coderpig.demo.ext.KtCameraExt.Companion.dispatchTakePictureIntent
 import cn.coderpig.demo.ext.UriBean
 import cn.coderpig.demo.ext.getOutputMediaFileUri
@@ -26,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 120) {
-            LightUpload.uploadImage(uriBean.path, reqData = ReqData(uploadUrl = "http://uat.zhaoshang800.com//broker/image/uploadNotZip"))
+            LightUpload.uploadImage(uriBean.path, needCompress = true)
         }
     }
 

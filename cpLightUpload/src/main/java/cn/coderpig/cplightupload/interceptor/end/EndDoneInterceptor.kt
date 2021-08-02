@@ -11,7 +11,9 @@ import cn.coderpig.cplightupload.utils.logV
  */
 class EndDoneInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Task {
-        "上传前的准备工作已完成.".logV()
+        "============ 上传任务执行完毕 ============ ".logV()
+        val task = chain.task()
+        task.callback?.onSuccess(task)
         return chain.task()
     }
 }

@@ -16,12 +16,12 @@ class PictureRotateInterceptor : Interceptor {
         "============ 判断是否需要图片翻转 ============".logV()
         val degree = FileUtils.readPictureDegree(task.filePath!!)
         if (degree != 0) {
-            FileUtils.rotateToDegrees(task.filePath!!, degree.toFloat())
             "图片旋转修正".logV()
+            FileUtils.rotateToDegrees(task.filePath!!, degree.toFloat())
+            "图片旋转处理完毕".logV()
         } else {
-            "不需要旋转修正".logV()
+            "不需要旋转修正.".logV()
         }
-        "图片旋转处理完毕".logV()
         return chain.proceed(task)
     }
 }
