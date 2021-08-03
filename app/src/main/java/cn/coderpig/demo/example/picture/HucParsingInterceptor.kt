@@ -1,8 +1,8 @@
 package cn.coderpig.demo.example.picture
 
+import cn.coderpig.cplightupload.ImageTask
+import cn.coderpig.cplightupload.Task
 import cn.coderpig.cplightupload.interceptor.Interceptor
-import cn.coderpig.cplightupload.task.ImageTask
-import cn.coderpig.cplightupload.task.Task
 import cn.coderpig.cplightupload.utils.logD
 import cn.coderpig.cplightupload.utils.logV
 import org.json.JSONObject

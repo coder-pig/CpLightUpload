@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import cn.coderpig.cplightupload.LightUpload
-import cn.coderpig.cplightupload.task.Task
+import cn.coderpig.cplightupload.Task
 import cn.coderpig.cplightupload.upload.Upload
 import cn.coderpig.demo.ext.KtCameraExt.Companion.dispatchTakePictureIntent
 import cn.coderpig.demo.ext.KtCameraExt.Companion.dispatchTakeVideoIntent

@@ -4,10 +4,8 @@ import android.app.Application
 import android.content.Context
 import cn.coderpig.cplightupload.LightUpload
 import cn.coderpig.cplightupload.LightUploadBuilder
-import cn.coderpig.demo.example.picture.HucParsingInterceptor
-import cn.coderpig.demo.example.picture.ImageUploadConfig
-import cn.coderpig.demo.example.picture.PictureCompressInterceptor
-import cn.coderpig.demo.example.picture.PictureRotateInterceptor
+import cn.coderpig.cplightupload.LightUploadTask
+import cn.coderpig.demo.example.picture.*
 import cn.coderpig.demo.example.video.VideoCompressInterceptor
 import cn.coderpig.demo.ext.PartnerKotlinExtKit
 
@@ -31,6 +29,7 @@ class TestApp : Application() {
                     .apply {
                         uploadServerUrl = "http://uat.zhaoshang800.com/broker/image/uploadNotZip"
                     })
+                .upload(LightUploadTask.IMAGE to HucUpload())
                 .addBeforeInterceptor(PictureRotateInterceptor())
                 .addBeforeInterceptor(PictureCompressInterceptor())
                 .addBeforeInterceptor(VideoCompressInterceptor())

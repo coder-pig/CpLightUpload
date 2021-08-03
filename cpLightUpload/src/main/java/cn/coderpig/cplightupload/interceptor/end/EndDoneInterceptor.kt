@@ -1,8 +1,8 @@
 package cn.coderpig.cplightupload.interceptor.end
 
 import cn.coderpig.cplightupload.LightUpload
+import cn.coderpig.cplightupload.Task
 import cn.coderpig.cplightupload.interceptor.Interceptor
-import cn.coderpig.cplightupload.task.Task
 import cn.coderpig.cplightupload.utils.logV
 
 /**

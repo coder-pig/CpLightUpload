@@ -1,6 +1,6 @@
 package cn.coderpig.cplightupload.interceptor
 
-import cn.coderpig.cplightupload.task.Task
+import cn.coderpig.cplightupload.Task
 import java.io.IOException
 
 /**

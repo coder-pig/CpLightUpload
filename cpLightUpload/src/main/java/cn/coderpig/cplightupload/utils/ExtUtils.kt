@@ -8,7 +8,7 @@ import android.util.Log
  * Desc: 一些扩展方法
  */
 
-/** 日志打印工具类 */
+/** 日志打印扩展 */
 fun String.logV() = Log.v("CpLogger", this)
 fun String.logD() = Log.d("CpLogger", this)
 fun String.logW() = Log.w("CpLogger", this)

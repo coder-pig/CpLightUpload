@@ -1,11 +1,11 @@
 package cn.coderpig.cplightupload.upload
 
-import cn.coderpig.cplightupload.task.Task
+import cn.coderpig.cplightupload.Task
 
 /**
  * Author: zpj
  * Date: 2021-07-30
- * Desc: 上传接口
+ * Desc: 上传接口(实现此接口，完成上传请求构造)
  */
 abstract class Upload {
     protected var mCallback: CallBack? = null

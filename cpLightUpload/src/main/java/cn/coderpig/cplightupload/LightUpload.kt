@@ -4,7 +4,6 @@ package cn.coderpig.cplightupload
 import android.content.Context
 import android.os.Looper
 import cn.coderpig.cplightupload.entity.ReqData
-import cn.coderpig.cplightupload.entity.TaskStatus
 import cn.coderpig.cplightupload.interceptor.Interceptor
 import cn.coderpig.cplightupload.interceptor.chain.BeforeInterceptorChain
 import cn.coderpig.cplightupload.interceptor.chain.DoneInterceptorChain
@@ -12,13 +11,8 @@ import cn.coderpig.cplightupload.interceptor.end.EndBeforeInterceptor
 import cn.coderpig.cplightupload.interceptor.end.EndDoneInterceptor
 import cn.coderpig.cplightupload.interceptor.start.StartBeforeInterceptor
 import cn.coderpig.cplightupload.interceptor.start.StartDoneInterceptor
-import cn.coderpig.cplightupload.task.ImageTask
-import cn.coderpig.cplightupload.task.Task
-import cn.coderpig.cplightupload.task.VideoTask
-import cn.coderpig.cplightupload.upload.HucUpload
 import cn.coderpig.cplightupload.upload.Upload
-import cn.coderpig.cplightupload.utils.MainPoster
-import cn.coderpig.cplightupload.utils.MainThreadSupport
+import cn.coderpig.cplightupload.utils.HandlerPoster
 import cn.coderpig.cplightupload.utils.logD
 import cn.coderpig.cplightupload.utils.logV
 import java.util.*
@@ -39,12 +33,12 @@ object LightUpload {
     private lateinit var beforeInterceptors: MutableList<Interceptor>
     private lateinit var doneInterceptors: MutableList<Interceptor>
 
-    // 自定义上传业务类
-    private var mUpload: Upload? = null
+    // 上传业务类及上传配置类
+    private var mUpload: Map<LightUploadTask, Upload?>? = null
     private var mConfig: Map<String, LightUploadConfig>? = null
 
-    private var mainThreadSupport: MainThreadSupport? = null
-    private var mainThreadPoster: MainPoster? = null
+    // 子线程回调主线程更新UI用
+    private var mHandlerPoster: HandlerPoster? = null
     private var mContext: Context? = null
 
 
@@ -54,25 +48,24 @@ object LightUpload {
         (builder ?: LightUploadBuilder()).let {
             executorService = it.executorService
             taskQueue = LinkedList()
-            // 添加默认拦截器
+            // 添加请求前的拦截器
             beforeInterceptors = it.beforeInterceptors.apply {
                 add(0, StartBeforeInterceptor())
                 add(EndBeforeInterceptor())
             }
+            // 添加请求后的拦截器
             doneInterceptors = it.doneInterceptors.apply {
                 add(0, StartDoneInterceptor())
                 add(EndDoneInterceptor())
             }
             dispatcher = LightUploadDispatcher(this)
-            mUpload = if (it.upload != null) it.upload else HucUpload()
-            mConfig = if (it.config != null) it.config else hashMapOf("Default" to LightUploadConfig())
-            mainThreadSupport = MainThreadSupport.AndroidHandlerMainThreadSupport(Looper.getMainLooper())
-            mainThreadPoster = mainThreadSupport!!.createPoster()
+            mUpload = if (it.uploads != null) it.uploads else hashMapOf(LightUploadTask.ELSE to null)
+            mConfig = if (it.configs != null) it.configs else  hashMapOf("Default" to LightUploadConfig())
+            mHandlerPoster = HandlerPoster(Looper.getMainLooper())
         }
     }
 
     /** 上传图片 */
-    @Synchronized
     fun uploadImage(
         filePath: String, md5: String? = null, fileName: String? = null,
         fileType: String? = null, fileUrl: String? = null,
@@ -95,7 +88,6 @@ object LightUpload {
     }
 
     /** 上传视频 */
-    @Synchronized
     fun uploadVideo(filePath: String) {
         uploadTask(VideoTask().also {
             it.filePath = filePath
@@ -105,7 +97,6 @@ object LightUpload {
     /** 添加上传任务 */
     @Synchronized
     private fun uploadTask(task: Task) {
-        taskQueue!!.add(task)
         dispatcher!!.enqueue(task)
     }
 
@@ -116,7 +107,14 @@ object LightUpload {
         "执行上传前的准备工作...".logV()
         var finalTask: Task? = BeforeInterceptorChain(beforeInterceptors, 0, originTask).proceed(originTask)
         "============ 准备上传 ============".logV()
-        mUpload?.initRequest(finalTask!!, object : Upload.CallBack {
+        val upload = when(finalTask) {
+            is ImageTask -> mUpload!![LightUploadTask.IMAGE]
+            is VideoTask -> mUpload!![LightUploadTask.VIDEO]
+            is AudioTask -> mUpload!![LightUploadTask.AUDIO]
+            is FileTask -> mUpload!![LightUploadTask.FILE]
+            else -> mUpload!![LightUploadTask.ELSE]
+        }
+        upload?.initRequest(finalTask!!, object : Upload.CallBack {
             override fun onSuccess(task: Task) {
                 finalTask!!.response = task.response
                 finalTask = DoneInterceptorChain(doneInterceptors, 0, originTask).proceed(originTask)
@@ -126,9 +124,8 @@ object LightUpload {
                 task.throwable?.message?.logD()
                 // 错误异常处理
             }
-
         })
-        mUpload?.sendRequest()
+        upload?.sendRequest()
     }
 
     fun getContext() = mContext
@@ -140,7 +137,7 @@ object LightUpload {
     fun getConfig() = mConfig
 
     fun postTask(task: Task) {
-        mainThreadPoster!!.enqueue(task)
+        mHandlerPoster!!.enqueue(task)
     }
 
 }

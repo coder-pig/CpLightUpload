@@ -1,9 +1,11 @@
-package cn.coderpig.cplightupload.upload
+package cn.coderpig.demo.example.picture
 
 import android.os.Build
 import cn.coderpig.cplightupload.LightUpload
-import cn.coderpig.cplightupload.entity.TaskStatus
-import cn.coderpig.cplightupload.task.Task
+import cn.coderpig.cplightupload.Task
+import cn.coderpig.cplightupload.TaskStatus
+import cn.coderpig.cplightupload.upload.Response
+import cn.coderpig.cplightupload.upload.Upload
 import cn.coderpig.cplightupload.utils.logE
 import cn.coderpig.cplightupload.utils.logV
 import java.io.*
@@ -94,7 +96,10 @@ class HucUpload : Upload() {
             }
             val result = sb1.toString()
             "文件上传结束...".logV()
-            mTask!!.response = Response(conn.responseCode, result)
+            mTask!!.response = Response(
+                conn.responseCode,
+                result
+            )
             mTask!!.status = TaskStatus.DONE
             mCallback?.onSuccess(mTask!!)
         } catch (e: IOException) {

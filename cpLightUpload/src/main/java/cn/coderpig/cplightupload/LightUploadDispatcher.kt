@@ -1,23 +1,24 @@
 package cn.coderpig.cplightupload
 
-import cn.coderpig.cplightupload.task.Task
+import cn.coderpig.cplightupload.utils.logV
 
 /**
  * Author: zpj
  * Date: 2021-07-30
  * Desc: 任务调度器
  */
-class LightUploadDispatcher(private var kit: LightUpload) : Runnable {
+class LightUploadDispatcher(upload: LightUpload) : Runnable {
+    private val mUpload: LightUpload = upload
+    private val mQueue: LightUploadQueue = LightUploadQueue()
 
     fun enqueue(task: Task) {
-        kit.getExecutorService()!!.execute(this)
+        mQueue.enqueue(task)
+        mUpload.getExecutorService()!!.execute(this)
     }
 
-    @Synchronized
     override fun run() {
-        if(kit.getTaskQueue()?.size!! > 0) {
-            kit.invokeTask(kit.getTaskQueue()!!.first)
-            kit.getTaskQueue()!!.removeFirst()
-        }
+        Thread.currentThread().name.logV()
+        val task = mQueue.poll() ?: throw IllegalStateException("没有待处理的任务")
+        mUpload.invokeTask(task)
     }
 }

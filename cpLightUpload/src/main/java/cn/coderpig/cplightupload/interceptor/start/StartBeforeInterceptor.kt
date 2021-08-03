@@ -1,8 +1,8 @@
 package cn.coderpig.cplightupload.interceptor.start
 
 import cn.coderpig.cplightupload.LightUploadException
+import cn.coderpig.cplightupload.Task
 import cn.coderpig.cplightupload.interceptor.Interceptor
-import cn.coderpig.cplightupload.task.Task
 import cn.coderpig.cplightupload.utils.FileUtils
 import cn.coderpig.cplightupload.utils.logV
 import java.io.File
@@ -15,7 +15,7 @@ import java.io.File
 class StartBeforeInterceptor : Interceptor {
     @Synchronized
     override fun intercept(chain: Interceptor.Chain): Task {
-        "============ 上传文件常规校验 ============${System.currentTimeMillis()}".logV()
+        "============ 上传文件常规校验 ============".logV()
         val task = chain.task()
         "检查文件路径是为空...".logV()
         if (task.filePath.isNullOrBlank()) throw LightUploadException("The file path is null.")

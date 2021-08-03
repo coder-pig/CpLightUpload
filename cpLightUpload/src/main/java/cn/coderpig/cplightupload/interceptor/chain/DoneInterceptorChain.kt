@@ -1,7 +1,7 @@
 package cn.coderpig.cplightupload.interceptor.chain
 
+import cn.coderpig.cplightupload.Task
 import cn.coderpig.cplightupload.interceptor.Interceptor
-import cn.coderpig.cplightupload.task.Task
 
 /**
  * Author: zpj

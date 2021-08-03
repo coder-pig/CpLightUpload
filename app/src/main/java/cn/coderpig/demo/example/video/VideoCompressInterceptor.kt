@@ -1,9 +1,9 @@
 package cn.coderpig.demo.example.video
 
 import android.media.MediaMetadataRetriever
+import cn.coderpig.cplightupload.Task
+import cn.coderpig.cplightupload.VideoTask
 import cn.coderpig.cplightupload.interceptor.Interceptor
-import cn.coderpig.cplightupload.task.Task
-import cn.coderpig.cplightupload.task.VideoTask
 import cn.coderpig.cplightupload.utils.FileUtils
 import cn.coderpig.cplightupload.utils.logV
 import cn.coderpig.demo.TestApp
@@ -22,7 +22,7 @@ class VideoCompressInterceptor : Interceptor {
         // 压缩视频，先获取视频宽高
         val task = chain.task()
         if(task is VideoTask) {
-            "压缩视频:${task.filePath}".logV()
+            "压缩视频：${task.filePath}".logV()
             val retriever = MediaMetadataRetriever()
             retriever.setDataSource(task.filePath)
             var width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toInt()
@@ -41,7 +41,7 @@ class VideoCompressInterceptor : Interceptor {
                     val compressVideoFile = File(task.compressVideoPath!!)
                     task.compressVideoMD5 = FileUtils.getFileMD5ToString(compressVideoFile)
                 }
-                "压缩后的视频路径及新的MD5 → ${task.compressVideoPath} → ${task.compressVideoMD5}"
+                "压缩后的视频路径及新的MD5 → ${task.compressVideoPath} → ${task.compressVideoMD5}".logV()
             }
             retriever.release()
         }
