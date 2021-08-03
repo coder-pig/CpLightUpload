@@ -2,6 +2,7 @@ package cn.coderpig.demo.example.picture
 
 import android.os.Build
 import cn.coderpig.cplightupload.LightUpload
+import cn.coderpig.cplightupload.LightUploadTask
 import cn.coderpig.cplightupload.Task
 import cn.coderpig.cplightupload.TaskStatus
 import cn.coderpig.cplightupload.upload.Response
@@ -37,7 +38,7 @@ class HucUpload : Upload() {
         super.initRequest(task, callback)
         mTask = task
         task.reqData?.let {
-            mUrl = if(it.uploadUrl == null) LightUpload.getConfig()?.get("image")?.uploadServerUrl else it.uploadUrl
+            mUrl = if(it.uploadUrl == null) LightUpload.getConfig()?.get(LightUploadTask.IMAGE)?.uploadServerUrl else it.uploadUrl
             mTimeOut = it.timeout
             mRequestMethod = it.requestMethod
             this.md5 = task.md5

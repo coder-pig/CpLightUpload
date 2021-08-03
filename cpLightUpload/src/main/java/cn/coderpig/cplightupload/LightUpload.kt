@@ -35,7 +35,7 @@ object LightUpload {
 
     // 上传业务类及上传配置类
     private var mUpload: Map<LightUploadTask, Upload?>? = null
-    private var mConfig: Map<String, LightUploadConfig>? = null
+    private var mConfig: Map<LightUploadTask, LightUploadConfig>? = null
 
     // 子线程回调主线程更新UI用
     private var mHandlerPoster: HandlerPoster? = null
@@ -60,7 +60,7 @@ object LightUpload {
             }
             dispatcher = LightUploadDispatcher(this)
             mUpload = if (it.uploads != null) it.uploads else hashMapOf(LightUploadTask.ELSE to null)
-            mConfig = if (it.configs != null) it.configs else  hashMapOf("Default" to LightUploadConfig())
+            mConfig = if (it.configs != null) it.configs else  hashMapOf(LightUploadTask.ELSE to LightUploadConfig())
             mHandlerPoster = HandlerPoster(Looper.getMainLooper())
         }
     }
@@ -104,28 +104,37 @@ object LightUpload {
     @Synchronized
     fun invokeTask(originTask: Task) {
         "执行上传任务：${originTask.filePath}".logV()
+        "============ 准备上传 ============".logV()
+        var upload: Upload?
+        when(originTask) {
+            is ImageTask -> LightUploadTask.IMAGE
+            is VideoTask -> LightUploadTask.VIDEO
+            is AudioTask -> LightUploadTask.AUDIO
+            is FileTask -> LightUploadTask.FILE
+            else -> LightUploadTask.ELSE
+        }.let {
+            upload = mUpload!![it]
+            originTask.config = mConfig!![it]
+        }
         "执行上传前的准备工作...".logV()
         var finalTask: Task? = BeforeInterceptorChain(beforeInterceptors, 0, originTask).proceed(originTask)
-        "============ 准备上传 ============".logV()
-        val upload = when(finalTask) {
-            is ImageTask -> mUpload!![LightUploadTask.IMAGE]
-            is VideoTask -> mUpload!![LightUploadTask.VIDEO]
-            is AudioTask -> mUpload!![LightUploadTask.AUDIO]
-            is FileTask -> mUpload!![LightUploadTask.FILE]
-            else -> mUpload!![LightUploadTask.ELSE]
-        }
-        upload?.initRequest(finalTask!!, object : Upload.CallBack {
-            override fun onSuccess(task: Task) {
-                finalTask!!.response = task.response
-                finalTask = DoneInterceptorChain(doneInterceptors, 0, originTask).proceed(originTask)
-            }
+        if(finalTask!!.status != TaskStatus.DONE) {
+            "初始化上传请求...".logV()
+            upload?.initRequest(finalTask, object : Upload.CallBack {
+                override fun onSuccess(task: Task) {
+                    finalTask!!.response = task.response
+                    finalTask = DoneInterceptorChain(doneInterceptors, 0, originTask).proceed(originTask)
+                }
 
-            override fun onFailure(task: Task) {
-                task.throwable?.message?.logD()
-                // 错误异常处理
-            }
-        })
-        upload?.sendRequest()
+                override fun onFailure(task: Task) {
+                    task.throwable?.message?.logD()
+                    // 错误异常处理
+                }
+            })
+            upload?.sendRequest()
+        } else {
+            "任务有传记录，直接结束".logV()
+        }
     }
 
     fun getContext() = mContext

@@ -7,7 +7,7 @@ import cn.coderpig.cplightupload.LightUploadBuilder
 import cn.coderpig.cplightupload.LightUploadTask
 import cn.coderpig.demo.example.picture.*
 import cn.coderpig.demo.example.video.VideoCompressInterceptor
-import cn.coderpig.demo.ext.PartnerKotlinExtKit
+import cn.coderpig.demo.ext.KotlinExtKit
 
 /**
  * Author: zpj
@@ -22,11 +22,12 @@ class TestApp : Application() {
     override fun onCreate() {
         super.onCreate()
         context = this.applicationContext
-        PartnerKotlinExtKit.init(context!!)
+        KotlinExtKit.init(context!!)
         LightUpload.init(
             this, LightUploadBuilder()
-                .config("image" to ImageUploadConfig()
+                .config(LightUploadTask.IMAGE to ImageUploadConfig()
                     .apply {
+                        baseUrl = "http://uat.zhaoshang800.com/"
                         uploadServerUrl = "http://uat.zhaoshang800.com/broker/image/uploadNotZip"
                     })
                 .upload(LightUploadTask.IMAGE to HucUpload())

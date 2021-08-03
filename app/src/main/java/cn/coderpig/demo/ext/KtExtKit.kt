@@ -7,7 +7,7 @@ import android.content.Context
  * Date: 2021-07-30
  * Desc: 入口类
  */
-class PartnerKotlinExtKit private constructor() {
+class KotlinExtKit private constructor() {
     companion object {
         lateinit var context: Context
 

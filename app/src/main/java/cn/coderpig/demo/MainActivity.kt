@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 120) {
             repeat(10) {
-                LightUpload.uploadImage(uriBean.path, needCompress = true, compressPercent = it * 10, callback = object : Upload.CallBack {
+                LightUpload.uploadImage(uriBean.path, needCompress = false, compressPercent = it * 10, callback = object : Upload.CallBack {
                     override fun onSuccess(task: Task) {
                         lly_root.addView(TextView(this@MainActivity).apply {
                             text = " ${task.response!!.content}\n"

@@ -16,7 +16,7 @@ import java.util.*
  */
 fun getExternalVideoPath(): String {
     return if (isExternalStorageDisable()) "" else getAbsolutePath(
-        PartnerKotlinExtKit.context.getExternalFilesDir("Video")
+        KotlinExtKit.context.getExternalFilesDir("Video")
     )
 }
 

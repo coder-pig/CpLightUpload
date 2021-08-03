@@ -26,7 +26,7 @@ class LightUploadBuilder {
     var uploads: Map<LightUploadTask, Upload?>? = null
 
     // 上传配置
-    var configs: Map<String, LightUploadConfig>? = null
+    var configs: Map<LightUploadTask, LightUploadConfig>? = null
 
 
     fun addBeforeInterceptor(interceptor: Interceptor?): LightUploadBuilder {
@@ -41,7 +41,7 @@ class LightUploadBuilder {
         this.uploads = uploads.toMap(); return this
     }
 
-    fun config(vararg configs: Pair<String, LightUploadConfig>): LightUploadBuilder {
+    fun config(vararg configs: Pair<LightUploadTask, LightUploadConfig>): LightUploadBuilder {
         this.configs = configs.toMap(); return this
     }
 

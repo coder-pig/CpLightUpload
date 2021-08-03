@@ -35,6 +35,7 @@ abstract class Task {
     var callback: Upload.CallBack? = null   // 上传回调
     var response: Response? = null  // 上传结果
     var throwable: Throwable? = null  // 异常信息
+    var config: LightUploadConfig? = null   // 任务配置
 }
 
 /** 图片类型的上传任务 */
