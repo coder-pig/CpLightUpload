@@ -12,9 +12,7 @@ import cn.coderpig.cplightupload.interceptor.end.EndDoneInterceptor
 import cn.coderpig.cplightupload.interceptor.start.StartBeforeInterceptor
 import cn.coderpig.cplightupload.interceptor.start.StartDoneInterceptor
 import cn.coderpig.cplightupload.upload.Upload
-import cn.coderpig.cplightupload.utils.HandlerPoster
-import cn.coderpig.cplightupload.utils.logD
-import cn.coderpig.cplightupload.utils.logV
+import cn.coderpig.cplightupload.utils.*
 import java.util.*
 import java.util.concurrent.ExecutorService
 
@@ -30,8 +28,8 @@ object LightUpload {
     const val LIGHT_UPLOAD = 666  // 消息标记
 
     // 拦截器(上传前、上传后附加处理)
-    private lateinit var beforeInterceptors: MutableList<Interceptor>
-    private lateinit var doneInterceptors: MutableList<Interceptor>
+    private lateinit var beforeInterceptors: List<Interceptor>
+    private lateinit var doneInterceptors: List<Interceptor>
 
     // 上传业务类及上传配置类
     private var mUpload: Map<LightUploadTask, Upload?>? = null
@@ -48,27 +46,37 @@ object LightUpload {
         (builder ?: LightUploadBuilder()).let {
             executorService = it.executorService
             taskQueue = LinkedList()
-            // 添加请求前的拦截器
+            // 添加请求前的拦截器，同时返回一个不可变的列表
             beforeInterceptors = it.beforeInterceptors.apply {
                 add(0, StartBeforeInterceptor())
                 add(EndBeforeInterceptor())
-            }
+            }.immutableList()
             // 添加请求后的拦截器
             doneInterceptors = it.doneInterceptors.apply {
                 add(0, StartDoneInterceptor())
                 add(EndDoneInterceptor())
-            }
+            }.immutableList()
             dispatcher = LightUploadDispatcher(this)
-            mUpload = if (it.uploads != null) it.uploads else hashMapOf(LightUploadTask.ELSE to null)
-            mConfig = if (it.configs != null) it.configs else  hashMapOf(LightUploadTask.ELSE to LightUploadConfig())
+            mUpload = it.uploads
+            mConfig = it.configs
             mHandlerPoster = HandlerPoster(Looper.getMainLooper())
+        }
+    }
+
+    /** 上传文件 */
+    fun uploadFile(filePath: String, uploadUrl: String? = null, callback: Upload.CallBack? = null) {
+        generateTaskByPath(filePath)?.let {
+            when (it) {
+                is ImageTask -> uploadImage(filePath, uploadUrl = uploadUrl, callback = callback)
+                is VideoTask -> uploadVideo(filePath)
+            }
         }
     }
 
     /** 上传图片 */
     fun uploadImage(
         filePath: String, md5: String? = null, fileName: String? = null,
-        fileType: String? = null, fileUrl: String? = null,
+        fileType: String? = null, fileUrl: String? = null, uploadUrl: String? = null,
         reqData: ReqData? = ReqData(), status: TaskStatus? = TaskStatus.BEFORE,
         needCompress: Boolean? = false, compressPercent: Int? = 30,
         callback: Upload.CallBack? = null
@@ -79,6 +87,7 @@ object LightUpload {
             it.fileName = fileName
             it.fileType = fileType
             it.fileUrl = fileUrl
+            it.uploadUrl = uploadUrl
             it.reqData = reqData
             it.status = status
             it.needCompress = needCompress
@@ -106,7 +115,7 @@ object LightUpload {
         "执行上传任务：${originTask.filePath}".logV()
         "============ 准备上传 ============".logV()
         var upload: Upload?
-        when(originTask) {
+        when (originTask) {
             is ImageTask -> LightUploadTask.IMAGE
             is VideoTask -> LightUploadTask.VIDEO
             is AudioTask -> LightUploadTask.AUDIO
@@ -117,13 +126,15 @@ object LightUpload {
             originTask.config = mConfig!![it]
         }
         "执行上传前的准备工作...".logV()
-        var finalTask: Task? = BeforeInterceptorChain(beforeInterceptors, 0, originTask).proceed(originTask)
-        if(finalTask!!.status != TaskStatus.DONE) {
+        var finalTask: Task? =
+            BeforeInterceptorChain(beforeInterceptors, 0, originTask).proceed(originTask)
+        if (finalTask!!.status != TaskStatus.DONE) {
             "初始化上传请求...".logV()
             upload?.initRequest(finalTask, object : Upload.CallBack {
                 override fun onSuccess(task: Task) {
                     finalTask!!.response = task.response
-                    finalTask = DoneInterceptorChain(doneInterceptors, 0, originTask).proceed(originTask)
+                    finalTask =
+                        DoneInterceptorChain(doneInterceptors, 0, originTask).proceed(originTask)
                 }
 
                 override fun onFailure(task: Task) {

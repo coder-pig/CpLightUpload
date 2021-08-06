@@ -10,15 +10,18 @@ import androidx.appcompat.app.AppCompatActivity
 import cn.coderpig.cplightupload.LightUpload
 import cn.coderpig.cplightupload.Task
 import cn.coderpig.cplightupload.upload.Upload
+import cn.coderpig.cplightupload.utils.logE
 import cn.coderpig.demo.ext.KtCameraExt.Companion.dispatchTakePictureIntent
 import cn.coderpig.demo.ext.KtCameraExt.Companion.dispatchTakeVideoIntent
 import cn.coderpig.demo.ext.UriBean
 import cn.coderpig.demo.ext.getOutputMediaFileUri
 import com.blankj.utilcode.util.UriUtils
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var uriBean : UriBean
+    var list = arrayListOf(1,2,3,4)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,15 +31,16 @@ class MainActivity : AppCompatActivity() {
             dispatchTakePictureIntent(120, MediaStore.EXTRA_OUTPUT to uriBean.uri)
         }
         bt_take_video_upload.setOnClickListener {
-            dispatchTakeVideoIntent(110)
+//            LightUpload.uploadFile("xxxx.abc")
+//            dispatchTakeVideoIntent(110)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 120) {
-            repeat(10) {
-                LightUpload.uploadImage(uriBean.path, needCompress = false, compressPercent = it * 10, callback = object : Upload.CallBack {
+            repeat(1) {
+                LightUpload.uploadFile(uriBean.path, callback = object : Upload.CallBack {
                     override fun onSuccess(task: Task) {
                         lly_root.addView(TextView(this@MainActivity).apply {
                             text = " ${task.response!!.content}\n"
@@ -49,6 +53,20 @@ class MainActivity : AppCompatActivity() {
                     override fun onFailure(task: Task) {
                     }
                 })
+
+//                LightUpload.uploadImage(uriBean.path, needCompress = false, compressPercent = it * 10, callback = object : Upload.CallBack {
+//                    override fun onSuccess(task: Task) {
+//                        lly_root.addView(TextView(this@MainActivity).apply {
+//                            text = " ${task.response!!.content}\n"
+//                            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+//                                LinearLayout.LayoutParams.WRAP_CONTENT)
+//                        })
+//                        nsv_root.fullScroll(View.FOCUS_DOWN)
+//                    }
+//
+//                    override fun onFailure(task: Task) {
+//                    }
+//                })
             }
         } else if(requestCode == 110) {
             LightUpload.uploadVideo(UriUtils.uri2File(data?.data!!).absolutePath)

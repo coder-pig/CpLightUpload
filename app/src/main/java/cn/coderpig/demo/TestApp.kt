@@ -23,6 +23,7 @@ class TestApp : Application() {
         super.onCreate()
         context = this.applicationContext
         KotlinExtKit.init(context!!)
+        val builder = LightUploadBuilder().config()
         LightUpload.init(
             this, LightUploadBuilder()
                 .config(LightUploadTask.IMAGE to ImageUploadConfig()

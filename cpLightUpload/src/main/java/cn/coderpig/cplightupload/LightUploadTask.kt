@@ -20,7 +20,7 @@ enum class LightUploadTask {
 
 /** 上传任务状态枚举，依次为：上传前、准备上传、开始上传、上传中、上传后 */
 enum class TaskStatus {
-    BEFORE, START, UPLOADING, FAILURE, DONE
+    BEFORE, UPLOADING, FAILURE, DONE
 }
 
 /** 上传任务基类(抽取共有属性) */
@@ -29,7 +29,8 @@ abstract class Task {
     var fileName: String? = null    // 文件名
     var fileType: String? = null    // 文件类型
     var filePath: String? = null    // 文件路径
-    var fileUrl: String? = null     // 服务器文件URL
+    var fileUrl: String? = null     // 上传后的图片URL
+    var uploadUrl: String? = null   // 上传接口URL
     var reqData: ReqData? = null    // 任务请求参数
     var status: TaskStatus? = TaskStatus.BEFORE  // 任务状态，初始化默认Before
     var callback: Upload.CallBack? = null   // 上传回调
@@ -57,4 +58,4 @@ class AudioTask : Task()
 class FileTask : Task()
 
 /** 其他类型的上传任务 */
-class ElseTask: Task()
+class ElseTask : Task()
