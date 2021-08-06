@@ -33,23 +33,6 @@ def upload():
     return ""
 
 
-@app.route('/upload_new', methods=['POST'])
-def upload_new():
-    if request.headers['Content-Type'] == 'application/octet-stream':
-        filename = '123.gif'
-        with open(os.path.join(upload_dir, filename), 'wb+') as f:
-            f.write(request.data)
-        file_url = url_for('upload_file', filename=filename)
-        return json.dumps({
-            'code': 200,
-            'msg': "成功",
-            'data': {
-                filename: 'http://127.0.0.1:5000' + file_url
-            }
-        })
-    return ""
-
-
 # 判断文件路径是否存在，不存在是否创建
 def is_dir_existed(path, mkdir=True):
     if mkdir:
