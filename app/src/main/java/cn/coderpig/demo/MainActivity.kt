@@ -10,14 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import cn.coderpig.cplightupload.LightUpload
 import cn.coderpig.cplightupload.Task
 import cn.coderpig.cplightupload.upload.Upload
-import cn.coderpig.cplightupload.utils.logE
 import cn.coderpig.demo.ext.KtCameraExt.Companion.dispatchTakePictureIntent
-import cn.coderpig.demo.ext.KtCameraExt.Companion.dispatchTakeVideoIntent
 import cn.coderpig.demo.ext.UriBean
 import cn.coderpig.demo.ext.getOutputMediaFileUri
 import com.blankj.utilcode.util.UriUtils
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var uriBean : UriBean
@@ -39,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 120) {
-            repeat(1) {
+            repeat(5) {
                 LightUpload.uploadFile(uriBean.path, callback = object : Upload.CallBack {
                     override fun onSuccess(task: Task) {
                         lly_root.addView(TextView(this@MainActivity).apply {

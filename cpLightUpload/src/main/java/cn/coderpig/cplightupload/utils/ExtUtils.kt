@@ -25,13 +25,13 @@ fun <T> List<T>.immutableList(): List<T> = Collections.unmodifiableList(ArrayLis
 /** 判断文件后缀返回对应Task */
 fun generateTaskByPath(path: String?): Task? {
     if(path.isNullOrBlank()) return null
-    val fileExtSplit = path.split(".")
-    if(fileExtSplit.size < 2) return null
-    return when(fileExtSplit[1]) {
-        "png", "jpg", "jpeg", "webp", "gif", "svg", "bmp" -> ImageTask()
-        "mp4", "mov", "wmv", "flv", "avi", "mkv" -> VideoTask()
-        "mp3", "wav", "aac", "flac", "ape", "alac" -> AudioTask()
-        else -> object : Task() {}
+    path.split(".").let {
+        if(it.size < 2) return null
+        return when(it[1]) {
+            "png", "jpg", "jpeg", "webp", "gif", "svg", "bmp" -> ImageTask()
+            "mp4", "mov", "wmv", "flv", "avi", "mkv" -> VideoTask()
+            "mp3", "wav", "aac", "flac", "ape", "alac" -> AudioTask()
+            else -> object : Task() {}
+        }
     }
-
 }

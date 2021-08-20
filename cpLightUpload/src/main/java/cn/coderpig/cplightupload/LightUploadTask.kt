@@ -25,12 +25,12 @@ enum class TaskStatus {
 
 /** 上传任务基类(抽取共有属性) */
 abstract class Task {
+    abstract var taskType: LightUploadTask
     var md5: String? = null         // 文件md5
     var fileName: String? = null    // 文件名
     var fileType: String? = null    // 文件类型
     var filePath: String? = null    // 文件路径
     var fileUrl: String? = null     // 上传后的图片URL
-    var uploadUrl: String? = null   // 上传接口URL
     var reqData: ReqData? = null    // 任务请求参数
     var status: TaskStatus? = TaskStatus.BEFORE  // 任务状态，初始化默认Before
     var callback: Upload.CallBack? = null   // 上传回调
@@ -41,21 +41,30 @@ abstract class Task {
 
 /** 图片类型的上传任务 */
 class ImageTask : Task() {
+    override var taskType = LightUploadTask.IMAGE
     var needCompress: Boolean? = false  // 图片是否需要压缩
     var compressPercent: Int? = 30  // 图片的压缩比例
 }
 
 /** 视频类型的上传任务 */
 class VideoTask : Task() {
+    override var taskType = LightUploadTask.VIDEO
     var compressVideoPath: String? = null   // 压缩视频路径
     var compressVideoMD5: String? = null   // 压缩视频MD5
 }
 
 /** 音频类型的上传任务 */
-class AudioTask : Task()
+class AudioTask : Task() {
+    override var taskType = LightUploadTask.AUDIO
+}
 
 /** 文件类型的上传任务 */
-class FileTask : Task()
+class FileTask : Task() {
+    override var taskType = LightUploadTask.FILE
+}
+
 
 /** 其他类型的上传任务 */
-class ElseTask : Task()
+class ElseTask : Task() {
+    override var taskType = LightUploadTask.ELSE
+}

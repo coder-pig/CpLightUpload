@@ -11,6 +11,7 @@ import cn.coderpig.cplightupload.interceptor.end.EndBeforeInterceptor
 import cn.coderpig.cplightupload.interceptor.end.EndDoneInterceptor
 import cn.coderpig.cplightupload.interceptor.start.StartBeforeInterceptor
 import cn.coderpig.cplightupload.interceptor.start.StartDoneInterceptor
+import cn.coderpig.cplightupload.upload.HucUpload
 import cn.coderpig.cplightupload.upload.Upload
 import cn.coderpig.cplightupload.utils.*
 import java.util.*
@@ -37,8 +38,9 @@ object LightUpload {
 
     // 子线程回调主线程更新UI用
     private var mHandlerPoster: HandlerPoster? = null
-    private var mContext: Context? = null
 
+    // App级别的context
+    private var mContext: Context? = null
 
     /** 定义一个初始化方法，可传入一个自定义Builder */
     fun init(context: Context?, builder: LightUploadBuilder?) {
@@ -63,11 +65,11 @@ object LightUpload {
         }
     }
 
-    /** 上传文件 */
-    fun uploadFile(filePath: String, uploadUrl: String? = null, callback: Upload.CallBack? = null) {
+    /** 上传文件，自动区分类型 */
+    fun uploadFile(filePath: String, url: String? = null, callback: Upload.CallBack? = null) {
         generateTaskByPath(filePath)?.let {
             when (it) {
-                is ImageTask -> uploadImage(filePath, uploadUrl = uploadUrl, callback = callback)
+                is ImageTask -> uploadImage(filePath = filePath, reqData = ReqData().apply { uploadUrl = url }, callback = callback)
                 is VideoTask -> uploadVideo(filePath)
             }
         }
@@ -75,10 +77,14 @@ object LightUpload {
 
     /** 上传图片 */
     fun uploadImage(
-        filePath: String, md5: String? = null, fileName: String? = null,
-        fileType: String? = null, fileUrl: String? = null, uploadUrl: String? = null,
-        reqData: ReqData? = ReqData(), status: TaskStatus? = TaskStatus.BEFORE,
-        needCompress: Boolean? = false, compressPercent: Int? = 30,
+        task: ImageTask? = null,
+        filePath: String,
+        md5: String? = null,
+        fileName: String? = null,
+        fileType: String? = null,
+        fileUrl: String? = null,
+        reqData: ReqData? = ReqData(),
+        status: TaskStatus? = TaskStatus.BEFORE,
         callback: Upload.CallBack? = null
     ) {
         uploadTask(ImageTask().also {
@@ -87,11 +93,8 @@ object LightUpload {
             it.fileName = fileName
             it.fileType = fileType
             it.fileUrl = fileUrl
-            it.uploadUrl = uploadUrl
             it.reqData = reqData
             it.status = status
-            it.needCompress = needCompress
-            it.compressPercent = compressPercent
             it.callback = callback
         })
     }
@@ -130,7 +133,8 @@ object LightUpload {
             BeforeInterceptorChain(beforeInterceptors, 0, originTask).proceed(originTask)
         if (finalTask!!.status != TaskStatus.DONE) {
             "初始化上传请求...".logV()
-            upload?.initRequest(finalTask, object : Upload.CallBack {
+            if(upload == null) upload = HucUpload()
+            upload!!.initRequest(finalTask, object : Upload.CallBack {
                 override fun onSuccess(task: Task) {
                     finalTask!!.response = task.response
                     finalTask =

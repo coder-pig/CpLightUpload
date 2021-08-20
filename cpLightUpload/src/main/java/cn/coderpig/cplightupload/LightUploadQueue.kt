@@ -5,7 +5,7 @@ import java.util.*
 /**
  * Author: zpj
  * Date: 2021-08-03
- * Desc: 自定义任务队列(进出队列操作解锁)
+ * Desc: 自定义任务队列(进出队列操作加锁)
  */
 class LightUploadQueue {
     private val mQueue = LinkedList<Task>()

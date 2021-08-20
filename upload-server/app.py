@@ -44,4 +44,4 @@ def is_dir_existed(path, mkdir=True):
 
 if __name__ == '__main__':
     is_dir_existed(upload_dir)
-    app.run()
+    app.run(debug=True)
