@@ -1,10 +1,7 @@
 package cn.coderpig.cplightupload.utils
 
 import android.util.Log
-import cn.coderpig.cplightupload.AudioTask
-import cn.coderpig.cplightupload.ImageTask
-import cn.coderpig.cplightupload.Task
-import cn.coderpig.cplightupload.VideoTask
+import cn.coderpig.cplightupload.*
 import java.util.*
 
 /**
@@ -31,7 +28,7 @@ fun generateTaskByPath(path: String?): Task? {
             "png", "jpg", "jpeg", "webp", "gif", "svg", "bmp" -> ImageTask()
             "mp4", "mov", "wmv", "flv", "avi", "mkv" -> VideoTask()
             "mp3", "wav", "aac", "flac", "ape", "alac" -> AudioTask()
-            else -> object : Task() {}
+            else -> ElseTask()
         }
     }
 }

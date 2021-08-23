@@ -69,7 +69,11 @@ object LightUpload {
     fun uploadFile(filePath: String, url: String? = null, callback: Upload.CallBack? = null) {
         generateTaskByPath(filePath)?.let {
             when (it) {
-                is ImageTask -> uploadImage(filePath = filePath, reqData = ReqData().apply { uploadUrl = url }, callback = callback)
+                is ImageTask -> uploadImage(
+                    filePath = filePath,
+                    reqData = ReqData().apply { uploadUrl = url },
+                    callback = callback
+                )
                 is VideoTask -> uploadVideo(filePath)
             }
         }
@@ -78,7 +82,7 @@ object LightUpload {
     /** 上传图片 */
     fun uploadImage(
         task: ImageTask? = null,
-        filePath: String,
+        filePath: String? = null,
         md5: String? = null,
         fileName: String? = null,
         fileType: String? = null,
@@ -87,7 +91,7 @@ object LightUpload {
         status: TaskStatus? = TaskStatus.BEFORE,
         callback: Upload.CallBack? = null
     ) {
-        uploadTask(ImageTask().also {
+        uploadTask(task ?: ImageTask().also {
             it.filePath = filePath
             it.md5 = md5
             it.fileName = fileName
@@ -133,7 +137,7 @@ object LightUpload {
             BeforeInterceptorChain(beforeInterceptors, 0, originTask).proceed(originTask)
         if (finalTask!!.status != TaskStatus.DONE) {
             "初始化上传请求...".logV()
-            if(upload == null) upload = HucUpload()
+            if (upload == null) upload = HucUpload()
             upload!!.initRequest(finalTask, object : Upload.CallBack {
                 override fun onSuccess(task: Task) {
                     finalTask!!.response = task.response

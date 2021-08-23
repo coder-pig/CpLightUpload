@@ -18,7 +18,7 @@ class PictureCompressInterceptor : Interceptor {
         val task = chain.task()
         if(task is ImageTask) {
             "============ 校验是否需要进行图片压缩，及压缩比例 ============".logV()
-            (task as ImageTask).let {
+            task.let {
                 if(it.needCompress!!) {
                     "执行压缩操作，压缩比例为${it.compressPercent}%".logV()
                     val afterPath = task.filePath!!.replace(".${task.fileType!!}", "") + "_compress_${it.compressPercent}." + task.fileType!!

@@ -29,7 +29,7 @@ class TestApp : Application() {
             this, LightUploadBuilder()
                 .config(LightUploadTask.IMAGE to ImageUploadConfig().apply {
                     reqData = ReqData(
-                        uploadUrl = "http://127.0.0.1:5000/upload_pic",
+                        uploadUrl = "http://127.0.0.1:5000/upload",
                         requestMethod = "POST",
                         headers = hashMapOf(
                             "Charset" to "utf-8",
