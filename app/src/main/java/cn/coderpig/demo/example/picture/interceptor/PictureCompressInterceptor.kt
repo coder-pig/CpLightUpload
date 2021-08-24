@@ -14,7 +14,6 @@ import java.io.File
  * Desc: 图片压缩拦截器
  */
 class PictureCompressInterceptor : Interceptor {
-    @Synchronized
     override fun intercept(chain: Interceptor.Chain): Task {
         val task = chain.task()
         val config = task.config as? ImageUploadConfig

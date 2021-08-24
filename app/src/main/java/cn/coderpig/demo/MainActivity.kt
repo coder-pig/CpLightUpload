@@ -39,25 +39,29 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 120) {
-            LightUpload.upload(task = CpImageTask().apply {
-                filePath = uriBean.path
-                callback = object : Upload.CallBack {
-                    override fun onSuccess(task: Task) {
-                        lly_root.addView(TextView(this@MainActivity).apply {
-                            text = " ${task.response!!.content}\n"
-                            layoutParams = LinearLayout.LayoutParams(
-                                LinearLayout.LayoutParams.WRAP_CONTENT,
-                                LinearLayout.LayoutParams.WRAP_CONTENT
-                            )
-                        })
-                        nsv_root.fullScroll(View.FOCUS_DOWN)
-                    }
+            repeat(10) {
+                LightUpload.upload(task = CpImageTask().apply {
+                    filePath = uriBean.path
+                    needCompress = true
+                    compressPercent = (1..100).random()
+                    callback = object : Upload.CallBack {
+                        override fun onSuccess(task: Task) {
+                            lly_root.addView(TextView(this@MainActivity).apply {
+                                text = " ${task.response!!.content}\n"
+                                layoutParams = LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                                )
+                            })
+                            nsv_root.fullScroll(View.FOCUS_DOWN)
+                        }
 
-                    override fun onFailure(task: Task) {
-                        task.throwable?.message?.let { it1 -> shortToast(it1) }
+                        override fun onFailure(task: Task) {
+                            task.throwable?.message?.let { it1 -> shortToast(it1) }
+                        }
                     }
-                }
-            })
+                })
+            }
         } else if (requestCode == 110) {
             LightUpload.upload(task = CpVideoTask().apply {
                 filePath = UriUtils.uri2File(data?.data!!).absolutePath

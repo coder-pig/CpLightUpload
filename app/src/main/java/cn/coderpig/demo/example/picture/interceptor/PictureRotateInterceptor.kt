@@ -13,7 +13,6 @@ import cn.coderpig.demo.example.picture.ImageUploadConfig
  * Desc: 图片旋转拦截器
  */
 class PictureRotateInterceptor : Interceptor {
-    @Synchronized
     override fun intercept(chain: Interceptor.Chain): Task {
         val task = chain.task()
         val config = task.config as? ImageUploadConfig

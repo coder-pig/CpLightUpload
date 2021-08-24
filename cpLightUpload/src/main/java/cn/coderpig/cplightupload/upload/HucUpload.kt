@@ -16,7 +16,6 @@ import java.util.*
  * Desc: 封装自带抠脚 HttpUrlConnection 上传(默认实现)
  */
 class HucUpload : Upload() {
-    @Synchronized
     override fun sendRequest() {
         "开始文件上传...".logV()
         var ins: InputStream? = null

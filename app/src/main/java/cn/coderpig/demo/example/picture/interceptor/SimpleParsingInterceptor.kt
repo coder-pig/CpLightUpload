@@ -13,7 +13,6 @@ import org.json.JSONObject
  * Desc: 抠脚http解析器
  */
 class SimpleParsingInterceptor: Interceptor {
-    @Synchronized
     override fun intercept(chain: Interceptor.Chain): Task {
         val task = chain.task()
         if(task is ImageTask) {
