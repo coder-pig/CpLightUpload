@@ -1,6 +1,7 @@
 package cn.coderpig.cplightupload.upload
 
 import cn.coderpig.cplightupload.LightUpload
+import cn.coderpig.cplightupload.Response
 import cn.coderpig.cplightupload.TaskStatus
 import cn.coderpig.cplightupload.utils.logE
 import cn.coderpig.cplightupload.utils.logV

@@ -2,6 +2,7 @@ package cn.coderpig.cplightupload.upload
 
 import cn.coderpig.cplightupload.LightUpload
 import cn.coderpig.cplightupload.Task
+import cn.coderpig.cplightupload.TaskStatus
 import cn.coderpig.cplightupload.utils.logV
 
 /**
@@ -31,7 +32,10 @@ abstract class Upload {
         }
     }
 
-    abstract fun sendRequest()   // 执行请求
+    // 执行请求
+    open fun sendRequest() {
+        mTask.status = TaskStatus.UPLOADING
+    }
 
     // 回调接口
     interface CallBack {

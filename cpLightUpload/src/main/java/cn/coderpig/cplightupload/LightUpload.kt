@@ -1,7 +1,6 @@
 package cn.coderpig.cplightupload
 
 
-import android.content.Context
 import android.os.Looper
 import cn.coderpig.cplightupload.entity.ReqData
 import cn.coderpig.cplightupload.interceptor.Interceptor
@@ -36,78 +35,70 @@ object LightUpload {
     private var mUpload: Map<LightUploadTask, Upload?>? = null
     private var mConfig: Map<LightUploadTask, LightUploadConfig>? = null
 
-    // 子线程回调主线程更新UI用
+    // 子线程回调主线程更新UI
     private var mHandlerPoster: HandlerPoster? = null
 
-    // App级别的context
-    private var mContext: Context? = null
-
-    /** 定义一个初始化方法，可传入一个自定义Builder */
-    fun init(context: Context?, builder: LightUploadBuilder?) {
-        mContext = context
-        (builder ?: LightUploadBuilder()).let {
-            executorService = it.executorService
-            taskQueue = LinkedList()
-            // 添加请求前的拦截器，同时返回一个不可变的列表
-            beforeInterceptors = it.beforeInterceptors.apply {
-                add(0, StartBeforeInterceptor())
-                add(EndBeforeInterceptor())
-            }.immutableList()
-            // 添加请求后的拦截器
-            doneInterceptors = it.doneInterceptors.apply {
-                add(0, StartDoneInterceptor())
-                add(EndDoneInterceptor())
-            }.immutableList()
-            dispatcher = LightUploadDispatcher(this)
-            mUpload = it.uploads
-            mConfig = it.configs
-            mHandlerPoster = HandlerPoster(Looper.getMainLooper())
+    /**
+     * 初始化方法
+     *
+     * 可传入一个自定义Builder对象[builder]，只能调用一次，多次调用会抛异常
+     * */
+    fun init(builder: LightUploadBuilder?) {
+        if (taskQueue == null) {
+            (builder ?: LightUploadBuilder()).let {
+                executorService = it.executorService
+                dispatcher = LightUploadDispatcher(this)
+                mHandlerPoster = HandlerPoster(Looper.getMainLooper())
+                taskQueue = LinkedList()
+                // 添加请求前后拦截器，同时返回一个不可变的列表
+                beforeInterceptors = it.beforeInterceptors.apply {
+                    add(0, StartBeforeInterceptor())
+                    add(EndBeforeInterceptor())
+                }.immutableList()
+                doneInterceptors = it.doneInterceptors.apply {
+                    add(0, StartDoneInterceptor())
+                    add(EndDoneInterceptor())
+                }.immutableList()
+                mUpload = it.uploads
+                mConfig = it.configs
+            }
+        } else {
+            throw LightUploadException("只能初始化一次")
         }
     }
 
-    /** 上传文件，自动区分类型 */
-    fun uploadFile(filePath: String, url: String? = null, callback: Upload.CallBack? = null) {
-        generateTaskByPath(filePath)?.let {
-            when (it) {
-                is ImageTask -> uploadImage(
-                    filePath = filePath,
-                    reqData = ReqData().apply { uploadUrl = url },
-                    callback = callback
-                )
-                is VideoTask -> uploadVideo(filePath)
+    /**
+     * 上传任务
+     *
+     * [filePath] 文件路径
+     * [url] 上传地址
+     * [callback] 上传结果回调
+     * [task] 上传任务
+     * */
+    fun upload(
+        filePath: String? = null,
+        url: String? = null,
+        callback: Upload.CallBack? = null,
+        task: Task? = null
+    ) {
+        if (task != null) uploadTask(task) else {
+            generateTaskByPath(filePath)?.let {
+                when (it) {
+                    is ImageTask -> uploadTask(ImageTask().apply {
+                        this.filePath = filePath
+                        this.reqData = ReqData().apply { uploadUrl = url }
+                        this.callback = callback
+                        this.config = mConfig?.get(LightUploadTask.IMAGE)
+                    })
+                    is VideoTask -> uploadTask(VideoTask().apply {
+
+                    })
+                    is AudioTask -> uploadTask(AudioTask())
+                    is FileTask -> uploadTask(FileTask())
+                    else -> uploadTask(ElseTask())
+                }
             }
         }
-    }
-
-    /** 上传图片 */
-    fun uploadImage(
-        task: ImageTask? = null,
-        filePath: String? = null,
-        md5: String? = null,
-        fileName: String? = null,
-        fileType: String? = null,
-        fileUrl: String? = null,
-        reqData: ReqData? = ReqData(),
-        status: TaskStatus? = TaskStatus.BEFORE,
-        callback: Upload.CallBack? = null
-    ) {
-        uploadTask(task ?: ImageTask().also {
-            it.filePath = filePath
-            it.md5 = md5
-            it.fileName = fileName
-            it.fileType = fileType
-            it.fileUrl = fileUrl
-            it.reqData = reqData
-            it.status = status
-            it.callback = callback
-        })
-    }
-
-    /** 上传视频 */
-    fun uploadVideo(filePath: String) {
-        uploadTask(VideoTask().also {
-            it.filePath = filePath
-        })
     }
 
     /** 添加上传任务 */
@@ -118,7 +109,7 @@ object LightUpload {
 
     /** 执行任务 */
     @Synchronized
-    fun invokeTask(originTask: Task) {
+    internal fun invokeTask(originTask: Task) {
         "执行上传任务：${originTask.filePath}".logV()
         "============ 准备上传 ============".logV()
         var upload: Upload?
@@ -155,8 +146,6 @@ object LightUpload {
             "任务有传记录，直接结束".logV()
         }
     }
-
-    fun getContext() = mContext
 
     fun getTaskQueue() = taskQueue
 

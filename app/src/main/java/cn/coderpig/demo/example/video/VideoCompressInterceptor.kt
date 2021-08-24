@@ -2,7 +2,6 @@ package cn.coderpig.demo.example.video
 
 import android.media.MediaMetadataRetriever
 import cn.coderpig.cplightupload.Task
-import cn.coderpig.cplightupload.VideoTask
 import cn.coderpig.cplightupload.interceptor.Interceptor
 import cn.coderpig.cplightupload.utils.FileUtils
 import cn.coderpig.cplightupload.utils.logV
@@ -21,7 +20,7 @@ class VideoCompressInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Task {
         // 压缩视频，先获取视频宽高
         val task = chain.task()
-        if(task is VideoTask) {
+        if(task is CpVideoTask) {
             "压缩视频：${task.filePath}".logV()
             val retriever = MediaMetadataRetriever()
             retriever.setDataSource(task.filePath)
@@ -45,6 +44,6 @@ class VideoCompressInterceptor : Interceptor {
             }
             retriever.release()
         }
-        return chain.task()
+        return chain.proceed(task)
     }
 }

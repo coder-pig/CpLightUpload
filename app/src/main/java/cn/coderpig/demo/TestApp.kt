@@ -7,8 +7,13 @@ import cn.coderpig.cplightupload.LightUploadBuilder
 import cn.coderpig.cplightupload.LightUploadTask
 import cn.coderpig.cplightupload.entity.ReqData
 import cn.coderpig.cplightupload.upload.HucUpload
-import cn.coderpig.demo.example.picture.*
+import cn.coderpig.demo.example.picture.ImageUploadConfig
+import cn.coderpig.demo.example.picture.interceptor.PictureCompressInterceptor
+import cn.coderpig.demo.example.picture.interceptor.PictureRotateInterceptor
+import cn.coderpig.demo.example.picture.interceptor.SimpleParsingInterceptor
 import cn.coderpig.demo.example.video.VideoCompressInterceptor
+import cn.coderpig.demo.example.video.VideoFrameInterceptor
+import cn.coderpig.demo.example.video.VideoUploadConfig
 import cn.coderpig.demo.ext.KotlinExtKit
 
 /**
@@ -25,8 +30,7 @@ class TestApp : Application() {
         super.onCreate()
         context = this.applicationContext
         KotlinExtKit.init(context!!)
-        LightUpload.init(
-            this, LightUploadBuilder()
+        LightUpload.init(LightUploadBuilder()
                 .config(LightUploadTask.IMAGE to ImageUploadConfig().apply {
                     reqData = ReqData(
                         uploadUrl = "http://127.0.0.1:5000/upload",
@@ -36,9 +40,11 @@ class TestApp : Application() {
                             "connection" to "keep-alive"
                         )
                     )
-                }, LightUploadTask.VIDEO to VideoUploadConfig().apply {
+                }, LightUploadTask.VIDEO to VideoUploadConfig()
+                    .apply {
                     reqData = ReqData(
-                        uploadUrl = "http://127.0.0.1:5000/upload_video",
+                        uploadUrl = "http://127.0.0.1:5000/upload",
+
                         requestMethod = "POST",
                         headers = hashMapOf(
                             "Charset" to "utf-8",
@@ -50,7 +56,8 @@ class TestApp : Application() {
                 .addBeforeInterceptor(PictureRotateInterceptor())
                 .addBeforeInterceptor(PictureCompressInterceptor())
                 .addBeforeInterceptor(VideoCompressInterceptor())
-                .addDoneInterceptors(HucParsingInterceptor())
+                .addBeforeInterceptor(VideoFrameInterceptor())
+                .addDoneInterceptors(SimpleParsingInterceptor())
         )
     }
 }

@@ -1,4 +1,4 @@
-package cn.coderpig.demo.example.picture
+package cn.coderpig.demo.example.picture.interceptor
 
 import cn.coderpig.cplightupload.ImageTask
 import cn.coderpig.cplightupload.Task
@@ -12,7 +12,7 @@ import org.json.JSONObject
  * Date: 2021-08-02
  * Desc: 抠脚http解析器
  */
-class HucParsingInterceptor: Interceptor {
+class SimpleParsingInterceptor: Interceptor {
     @Synchronized
     override fun intercept(chain: Interceptor.Chain): Task {
         val task = chain.task()
@@ -38,7 +38,7 @@ class HucParsingInterceptor: Interceptor {
                         task.fileUrl = image
                         task.fileUrl?.logV()
                     } else {
-
+                        jsonObject.toString().logV()
                     }
                 } catch (e: Exception) {
                     e.message?.logD()

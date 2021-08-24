@@ -2,7 +2,6 @@ package cn.coderpig.cplightupload.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import cn.coderpig.cplightupload.LightUpload
 import java.util.*
 
 /**
@@ -40,11 +39,11 @@ class SPUtils {
 
 
     private constructor(spName: String) {
-        sp = LightUpload.getContext()?.getSharedPreferences(spName, Context.MODE_PRIVATE)
+//        sp = LightUpload.getContext()?.getSharedPreferences(spName, Context.MODE_PRIVATE)
     }
 
     private constructor(spName: String, mode: Int) {
-        sp = LightUpload.getContext()?.getSharedPreferences(spName, mode)
+//        sp = LightUpload.getContext()?.getSharedPreferences(spName, mode)
     }
 
     fun put(key: String, value: String) {

@@ -1,7 +1,6 @@
 package cn.coderpig.cplightupload
 
 import cn.coderpig.cplightupload.entity.ReqData
-import cn.coderpig.cplightupload.upload.Response
 import cn.coderpig.cplightupload.upload.Upload
 
 
@@ -11,6 +10,7 @@ import cn.coderpig.cplightupload.upload.Upload
  * Desc:上传任务相关
  */
 
+/** 后台返回信息简陋封装(响应体内容交给后续响应体解析) */
 data class Response(var statusCode: Int, var content: String)
 
 /** 上传文件类型的枚举 */
@@ -40,31 +40,27 @@ abstract class Task {
 }
 
 /** 图片类型的上传任务 */
-class ImageTask : Task() {
+open class ImageTask : Task() {
     override var taskType = LightUploadTask.IMAGE
-    var needCompress: Boolean? = false  // 图片是否需要压缩
-    var compressPercent: Int? = 30  // 图片的压缩比例
 }
 
 /** 视频类型的上传任务 */
-class VideoTask : Task() {
+open class VideoTask : Task() {
     override var taskType = LightUploadTask.VIDEO
-    var compressVideoPath: String? = null   // 压缩视频路径
-    var compressVideoMD5: String? = null   // 压缩视频MD5
 }
 
 /** 音频类型的上传任务 */
-class AudioTask : Task() {
+open class AudioTask : Task() {
     override var taskType = LightUploadTask.AUDIO
 }
 
 /** 文件类型的上传任务 */
-class FileTask : Task() {
+open class FileTask : Task() {
     override var taskType = LightUploadTask.FILE
 }
 
 
 /** 其他类型的上传任务 */
-class ElseTask : Task() {
+open class ElseTask : Task() {
     override var taskType = LightUploadTask.ELSE
 }
