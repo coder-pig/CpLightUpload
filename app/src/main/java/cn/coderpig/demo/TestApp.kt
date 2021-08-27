@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.Context
 import cn.coderpig.cplightupload.LightUpload
 import cn.coderpig.cplightupload.LightUploadBuilder
-import cn.coderpig.cplightupload.LightUploadTask
-import cn.coderpig.cplightupload.entity.ReqData
+import cn.coderpig.cplightupload.ReqData
+import cn.coderpig.cplightupload.UploadTaskType
 import cn.coderpig.cplightupload.upload.HucUpload
 import cn.coderpig.demo.example.picture.ImageUploadConfig
 import cn.coderpig.demo.example.picture.interceptor.PictureCompressInterceptor
@@ -31,28 +31,28 @@ class TestApp : Application() {
         context = this.applicationContext
         KotlinExtKit.init(context!!)
         LightUpload.init(LightUploadBuilder()
-                .config(LightUploadTask.IMAGE to ImageUploadConfig().apply {
+                .config(UploadTaskType.IMAGE to ImageUploadConfig().apply {
                     reqData = ReqData(
                         uploadUrl = "http://127.0.0.1:5000/upload",
                         requestMethod = "POST",
-                        headers = hashMapOf(
+                        reqHeaders = hashMapOf(
                             "Charset" to "utf-8",
                             "connection" to "keep-alive"
                         )
                     )
-                }, LightUploadTask.VIDEO to VideoUploadConfig()
+                }, UploadTaskType.VIDEO to VideoUploadConfig()
                     .apply {
                     reqData = ReqData(
                         uploadUrl = "http://127.0.0.1:5000/upload",
 
                         requestMethod = "POST",
-                        headers = hashMapOf(
+                        reqHeaders = hashMapOf(
                             "Charset" to "utf-8",
                             "connection" to "keep-alive"
                         )
                     )
                 })
-                .upload(LightUploadTask.IMAGE to HucUpload())
+                .upload(UploadTaskType.IMAGE to HucUpload())
                 .addBeforeInterceptor(PictureRotateInterceptor())
                 .addBeforeInterceptor(PictureCompressInterceptor())
                 .addBeforeInterceptor(VideoCompressInterceptor())

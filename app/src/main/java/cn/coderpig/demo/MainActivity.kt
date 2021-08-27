@@ -39,11 +39,11 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 120) {
-            repeat(10) {
+            repeat(100) {
                 LightUpload.upload(task = CpImageTask().apply {
                     filePath = uriBean.path
                     needCompress = true
-                    compressPercent = (1..100).random()
+                    compressPercent = it
                     callback = object : Upload.CallBack {
                         override fun onSuccess(task: Task) {
                             lly_root.addView(TextView(this@MainActivity).apply {

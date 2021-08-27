@@ -1,6 +1,5 @@
 package cn.coderpig.cplightupload
 
-import cn.coderpig.cplightupload.entity.ReqData
 
 /**
  * Author: zpj

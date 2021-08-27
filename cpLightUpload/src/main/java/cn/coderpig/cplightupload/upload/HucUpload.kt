@@ -1,8 +1,8 @@
 package cn.coderpig.cplightupload.upload
 
 import cn.coderpig.cplightupload.LightUpload
-import cn.coderpig.cplightupload.Response
-import cn.coderpig.cplightupload.TaskStatus
+import cn.coderpig.cplightupload.ResData
+import cn.coderpig.cplightupload.UploadTaskStatus
 import cn.coderpig.cplightupload.utils.logE
 import cn.coderpig.cplightupload.utils.logV
 import java.io.*
@@ -22,16 +22,18 @@ class HucUpload : Upload() {
         try {
             mTask.reqData?.let { req ->
                 val conn = (URL(req.uploadUrl).openConnection() as HttpURLConnection).apply {
-                    readTimeout = req.timeout!!
-                    connectTimeout = req.timeout!!
+                    readTimeout = req.readTimeOut!!
+                    connectTimeout = req.connectTimeOut!!
                     doInput = true
                     doOutput = true
                     useCaches = false
                     requestMethod = req.requestMethod
                     // 请求头设置
                     val boundary = UUID.randomUUID()
-                    req.headers["Content-Type"] = "multipart/form-data;boundary=${boundary}"
-                    for ((k, v) in req.headers) setRequestProperty(k, v)
+                    req.reqHeaders?.let {
+                        it["Content-Type"] = "multipart/form-data;boundary=${boundary}"
+                        for ((k, v) in it) setRequestProperty(k, v)
+                    }
                     val dos = DataOutputStream(outputStream)
                     val sb = StringBuilder().append("--").append(boundary).append("\r\n")
                         .append("Content-Disposition: form-data; name=\"file\"; filename=\"")
@@ -61,13 +63,13 @@ class HucUpload : Upload() {
                 }
                 val result = sb1.toString()
                 "文件上传结束...".logV()
-                mTask.response = Response(conn.responseCode, result)
-                mTask.status = TaskStatus.DONE
+                mTask.response = ResData(conn.responseCode, result)
+                mTask.status = UploadTaskStatus.DONE
                 mCallback?.onSuccess(mTask)
             }
         } catch (e: IOException) {
             e.message?.logE()
-            mTask.status = TaskStatus.FAILURE
+            mTask.status = UploadTaskStatus.FAILURE
             mTask.throwable = e
             mCallback?.onFailure(mTask)
             LightUpload.postTask(mTask)

@@ -2,7 +2,7 @@ package cn.coderpig.cplightupload.upload
 
 import cn.coderpig.cplightupload.LightUpload
 import cn.coderpig.cplightupload.Task
-import cn.coderpig.cplightupload.TaskStatus
+import cn.coderpig.cplightupload.UploadTaskStatus
 import cn.coderpig.cplightupload.utils.logV
 
 /**
@@ -24,17 +24,19 @@ abstract class Upload {
             mTask.reqData?.let { tReq ->
                 if (tReq.uploadUrl.isNullOrBlank()) tReq.uploadUrl = cReq.uploadUrl
                 if (tReq.requestMethod.isNullOrBlank()) tReq.requestMethod = cReq.requestMethod
-                if (tReq.headers.isNullOrEmpty()) tReq.headers = cReq.headers
+                if (tReq.reqHeaders.isNullOrEmpty()) tReq.reqHeaders = cReq.reqHeaders
+                if (tReq.resHeaders.isNullOrEmpty()) tReq.resHeaders = cReq.resHeaders
                 if (tReq.params.isNullOrEmpty()) tReq.params = cReq.params
                 if (tReq.data.isNullOrEmpty()) tReq.data = cReq.data
-                if (tReq.timeout == null) tReq.timeout = cReq.timeout
+                if (tReq.readTimeOut == null) tReq.readTimeOut = cReq.readTimeOut
+                if (tReq.writeTimeout == null) tReq.writeTimeout = cReq.writeTimeout
             }
         }
     }
 
     // 执行请求
     open fun sendRequest() {
-        mTask.status = TaskStatus.UPLOADING
+        mTask.status = UploadTaskStatus.UPLOADING
     }
 
     // 回调接口

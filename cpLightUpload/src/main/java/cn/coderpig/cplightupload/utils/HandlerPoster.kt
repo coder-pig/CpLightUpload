@@ -5,7 +5,7 @@ import android.os.Looper
 import android.os.Message
 import cn.coderpig.cplightupload.LightUpload
 import cn.coderpig.cplightupload.Task
-import cn.coderpig.cplightupload.TaskStatus
+import cn.coderpig.cplightupload.UploadTaskStatus
 import java.util.*
 
 /**
@@ -40,8 +40,8 @@ class HandlerPoster(looper: Looper) : Handler(looper) {
     private fun call(task: Task?) {
         task?.let {
             if(it.callback != null) {
-                if(it.status == TaskStatus.FAILURE) it.callback!!.onFailure(task)
-                else if(it.status == TaskStatus.DONE) it.callback!!.onSuccess(task)
+                if(it.status == UploadTaskStatus.FAILURE) it.callback!!.onFailure(task)
+                else if(it.status == UploadTaskStatus.DONE) it.callback!!.onSuccess(task)
             }
         }
     }

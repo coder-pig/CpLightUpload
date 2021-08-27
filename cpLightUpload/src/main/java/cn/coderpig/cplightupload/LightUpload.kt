@@ -2,7 +2,6 @@ package cn.coderpig.cplightupload
 
 
 import android.os.Looper
-import cn.coderpig.cplightupload.entity.ReqData
 import cn.coderpig.cplightupload.interceptor.Interceptor
 import cn.coderpig.cplightupload.interceptor.chain.BeforeInterceptorChain
 import cn.coderpig.cplightupload.interceptor.chain.DoneInterceptorChain
@@ -32,8 +31,8 @@ object LightUpload {
     private lateinit var doneInterceptors: List<Interceptor>
 
     // 上传业务类及上传配置类
-    private var mUpload: Map<LightUploadTask, Upload?>? = null
-    private var mConfig: Map<LightUploadTask, LightUploadConfig>? = null
+    private var mUpload: Map<UploadTaskType, Upload?>? = null
+    private var mConfig: Map<UploadTaskType, LightUploadConfig>? = null
 
     // 子线程回调主线程更新UI
     private var mHandlerPoster: HandlerPoster? = null
@@ -88,7 +87,7 @@ object LightUpload {
                         this.filePath = filePath
                         this.reqData = ReqData().apply { uploadUrl = url }
                         this.callback = callback
-                        this.config = mConfig?.get(LightUploadTask.IMAGE)
+                        this.config = mConfig?.get(UploadTaskType.IMAGE)
                     })
                     is VideoTask -> uploadTask(VideoTask().apply {
 
@@ -108,17 +107,16 @@ object LightUpload {
     }
 
     /** 执行任务 */
-    @Synchronized
     internal fun invokeTask(originTask: Task) {
         "执行上传任务：${originTask.filePath}".logV()
         "============ 准备上传 ============".logV()
         var upload: Upload?
         when (originTask) {
-            is ImageTask -> LightUploadTask.IMAGE
-            is VideoTask -> LightUploadTask.VIDEO
-            is AudioTask -> LightUploadTask.AUDIO
-            is FileTask -> LightUploadTask.FILE
-            else -> LightUploadTask.ELSE
+            is ImageTask -> UploadTaskType.IMAGE
+            is VideoTask -> UploadTaskType.VIDEO
+            is AudioTask -> UploadTaskType.AUDIO
+            is FileTask -> UploadTaskType.FILE
+            else -> UploadTaskType.ELSE
         }.let {
             upload = mUpload!![it]
             originTask.config = mConfig!![it]
@@ -126,22 +124,23 @@ object LightUpload {
         "执行上传前的准备工作...".logV()
         var finalTask: Task? =
             BeforeInterceptorChain(beforeInterceptors, 0, originTask).proceed(originTask)
-        if (finalTask!!.status != TaskStatus.DONE) {
+        if (finalTask!!.status != UploadTaskStatus.DONE) {
             "初始化上传请求...".logV()
             if (upload == null) upload = HucUpload()
-            upload!!.initRequest(finalTask, object : Upload.CallBack {
-                override fun onSuccess(task: Task) {
-                    finalTask!!.response = task.response
-                    finalTask =
-                        DoneInterceptorChain(doneInterceptors, 0, originTask).proceed(originTask)
-                }
+            upload?.let {
+                it.initRequest(finalTask!!, object : Upload.CallBack {
+                    override fun onSuccess(task: Task) {
+                        finalTask!!.response = task.response
+                        finalTask = DoneInterceptorChain(doneInterceptors, 0, originTask).proceed(originTask)
+                    }
 
-                override fun onFailure(task: Task) {
-                    task.throwable?.message?.logD()
-                    // 错误异常处理
-                }
-            })
-            upload?.sendRequest()
+                    override fun onFailure(task: Task) {
+                        task.throwable?.message?.logD()
+                        // 错误异常处理
+                    }
+                })
+                it.sendRequest()
+            }
         } else {
             "任务有传记录，直接结束".logV()
         }

@@ -23,10 +23,10 @@ class LightUploadBuilder {
     var executorService: ExecutorService = DEFAULT_EXECUTOR_SERVICE
 
     // 上传业务
-    var uploads: Map<LightUploadTask, Upload?>? = null
+    var uploads: Map<UploadTaskType, Upload?>? = null
 
     // 上传配置
-    var configs: Map<LightUploadTask, LightUploadConfig>? = null
+    var configs: Map<UploadTaskType, LightUploadConfig>? = null
 
 
     fun addBeforeInterceptor(interceptor: Interceptor?): LightUploadBuilder {
@@ -37,11 +37,11 @@ class LightUploadBuilder {
         interceptor?.let { doneInterceptors.add(it) }; return this
     }
 
-    fun upload(vararg uploads: Pair<LightUploadTask, Upload>): LightUploadBuilder {
+    fun upload(vararg uploads: Pair<UploadTaskType, Upload>): LightUploadBuilder {
         this.uploads = uploads.toMap(); return this
     }
 
-    fun config(vararg configs: Pair<LightUploadTask, LightUploadConfig>): LightUploadBuilder {
+    fun config(vararg configs: Pair<UploadTaskType, LightUploadConfig>): LightUploadBuilder {
         this.configs = configs.toMap(); return this
     }
 
